@@ -1,0 +1,340 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>torabo-tsuki LP — Keymap Preview</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #111820;
+      --panel: #18222d;
+      --key: #22303c;
+      --key-hover: #2b3d4c;
+      --border: #344554;
+      --text: #e5e7eb;
+      --muted: #94a3b8;
+      --accent: #67e8f9;
+      --accent-bg: #164e63;
+      --unit: clamp(52px, 5.4vw, 78px);
+      --gap: clamp(5px, .55vw, 9px);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background:
+        radial-gradient(circle at 50% 0%, rgba(34, 211, 238, .07), transparent 38%),
+        var(--bg);
+      color: var(--text);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    main {
+      width: min(1480px, 100%);
+      margin: 0 auto;
+      padding: clamp(20px, 4vw, 56px);
+    }
+
+    header {
+      display: flex;
+      align-items: end;
+      justify-content: space-between;
+      gap: 24px;
+      margin-bottom: 28px;
+    }
+
+    h1 {
+      margin: 0 0 5px;
+      font-size: clamp(22px, 2.4vw, 34px);
+      letter-spacing: -.03em;
+    }
+
+    .subtitle {
+      margin: 0;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .tabs {
+      display: flex;
+      gap: 7px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    button {
+      border: 1px solid var(--border);
+      border-radius: 9px;
+      padding: 9px 14px;
+      background: var(--panel);
+      color: var(--muted);
+      font: inherit;
+      font-weight: 650;
+      cursor: pointer;
+      transition: .15s ease;
+    }
+
+    button:hover { color: var(--text); border-color: #527086; }
+    button[aria-selected="true"] { color: var(--accent); background: var(--accent-bg); border-color: #0e7490; }
+
+    .viewport {
+      overflow-x: auto;
+      padding: 3px 3px 22px;
+    }
+
+    .keyboard {
+      min-width: calc(var(--unit) * 14 + var(--gap) * 13 + clamp(80px, 9vw, 150px) + 36px);
+      display: grid;
+      gap: var(--gap);
+    }
+
+    .axis-row,
+    .row-shell {
+      display: grid;
+      grid-template-columns: 30px 1fr;
+      gap: 6px;
+    }
+
+    .axis-corner,
+    .row-label,
+    .col-label {
+      display: grid;
+      place-items: center;
+      color: var(--accent);
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 10px;
+      font-weight: 700;
+      opacity: .72;
+    }
+
+    .axis-corner {
+      width: 30px;
+      height: 22px;
+      border-right: 1px solid rgba(103, 232, 249, .2);
+      border-bottom: 1px solid rgba(103, 232, 249, .2);
+    }
+
+    .row-label {
+      border-right: 1px solid rgba(103, 232, 249, .2);
+    }
+
+    .column-headers {
+      height: 22px;
+    }
+
+    .row {
+      display: grid;
+      grid-template-columns: repeat(7, var(--unit)) minmax(80px, 1fr) repeat(7, var(--unit));
+      gap: var(--gap);
+    }
+
+    .row.short {
+      grid-template-columns: repeat(6, var(--unit)) calc(var(--unit) + var(--gap)) minmax(80px, 1fr) calc(var(--unit) + var(--gap)) repeat(6, var(--unit));
+    }
+
+    .row.short .split { grid-column: 10; }
+
+    .key {
+      position: relative;
+      height: var(--unit);
+      padding: 8px 6px 6px;
+      overflow: hidden;
+      border: 1px solid transparent;
+      border-radius: 7px;
+      background: var(--key);
+      box-shadow: 0 2px 0 rgba(0, 0, 0, .25);
+      text-align: center;
+      transition: .15s ease;
+    }
+
+    .key:hover { transform: translateY(-2px); background: var(--key-hover); border-color: var(--border); }
+    .key.transparent { opacity: .46; }
+    .key.layer-key { border-color: #0e7490; background: #203b47; }
+
+    .key-hole {
+      height: var(--unit);
+      border: 1px dashed rgba(148, 163, 184, .14);
+      border-radius: 7px;
+      background: rgba(15, 23, 42, .2);
+    }
+
+    .action {
+      position: absolute;
+      top: 5px;
+      left: 6px;
+      max-width: calc(100% - 12px);
+      overflow: hidden;
+      color: var(--muted);
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 9px;
+      line-height: 1;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .label {
+      display: grid;
+      height: 100%;
+      place-items: center;
+      padding-top: 7px;
+      font-size: clamp(13px, 1.45vw, 21px);
+      white-space: nowrap;
+    }
+
+    .label.small { font-size: clamp(9px, .82vw, 12px); }
+
+    .split { grid-column: 9; }
+
+    footer {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 18px;
+      margin-top: 10px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .dot {
+      display: inline-block;
+      width: 9px;
+      height: 9px;
+      margin-right: 5px;
+      border: 1px solid var(--border);
+      border-radius: 2px;
+      background: var(--key);
+    }
+
+    .dot.layer { border-color: #0e7490; background: #203b47; }
+
+    @media (max-width: 700px) {
+      header { align-items: start; flex-direction: column; }
+      .tabs { justify-content: flex-start; }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <header>
+      <div>
+        <h1 id="title">layer_0</h1>
+        <p class="subtitle">torabo-tsuki LP · M Layout · 4 rows · 50 keys</p>
+      </div>
+      <nav class="tabs" aria-label="レイヤー選択"></nav>
+    </header>
+
+    <div class="viewport">
+      <section class="keyboard" aria-label="キーマップ"></section>
+    </div>
+
+    <footer>
+      <span><i class="dot"></i>通常キー</span>
+      <span><i class="dot layer"></i>レイヤー操作を含むキー</span>
+      <span>▽ = 下位レイヤーの設定を継承</span>
+    </footer>
+  </main>
+
+  <script>
+    const k = (label, action = "&kp", extra = "") => ({ label, action, extra });
+    const tr = () => k("▽", "&trans", "transparent");
+
+    const layers = [
+      [
+        [k("ESC", "&kp ESCAPE"), k("Q"), k("W"), k("E"), k("R"), k("T"), k("Y"), k("U"), k("I"), k("O"), k("P"), k("⌫", "&kp BSPC")],
+        [k("CTRL", "&kp LCTRL"), k("A"), k("S"), k("D"), k("F"), k("G"), k("H"), k("J"), k("K"), k("L"), k(";", "&kp SEMI"), k("'", "&kp SQT")],
+        [k("⇧", "&kp LSHFT"), k("Z"), k("X"), k("C"), k("V"), k("B"), k("␠", "&kp SPACE"), k("↵", "&kp RET"), k("N"), k("M"), k(",", "&kp COMMA"), k(".", "&kp DOT"), k("⇧ /", "&mt RSHIFT FSLH", "layer-key small"), k("⇧", "&kp RSHFT")],
+        [k("CTRL", "&kp LCTRL"), k("CTRL", "&kp LCTRL"), k("◆", "&kp LGUI"), k("LALT", "&kp LALT"), k("⌫", "&kp BSPC"), k("2 ␠", "&lt 2 SPACE", "layer-key small"), k("⇧ LANG1", "&mt LSHIFT LANGUAGE_1", "layer-key small"), k("⇧ LANG2", "&mt RSHIFT LANGUAGE_2", "layer-key small"), k("3 ↵", "&lt 3 ENTER", "layer-key small"), null, null, k("RGUI", "&kp RGUI"), k("CTRL", "&kp RCTRL"), k("CTRL", "&kp RCTRL")]
+      ],
+      [
+        Array.from({ length: 12 }, tr),
+        [tr(), tr(), tr(), k("R CLICK", "&mkp RCLK", "small"), k("L CLICK", "&mkp LCLK", "small"), tr(), tr(), k("L CLICK", "&mkp LCLK", "small"), k("R CLICK", "&mkp RCLK", "small"), tr(), tr(), tr()],
+        Array.from({ length: 14 }, tr),
+        [...Array.from({ length: 9 }, tr), null, null, ...Array.from({ length: 3 }, tr)]
+      ],
+      [
+        [tr(), k("!", "&kp LS(NUMBER_1)"), k("@", "&kp LS(NUMBER_2)"), k("#", "&kp LS(N3)"), k("$", "&kp LS(N4)"), k("%", "&kp LS(N5)"), k("^", "&kp LS(N6)"), k("&", "&kp LS(N7)"), k("*", "&kp LS(N8)"), k("(", "&kp LS(N9)"), k(")", "&kp LS(N0)"), tr()],
+        [tr(), k("1", "&kp N1"), k("2", "&kp N2"), k("3", "&kp N3"), k("4", "&kp N4"), k("5", "&kp N5"), k("[", "&kp LEFT_BRACE"), k("-", "&kp MINUS"), k("=", "&kp EQUAL"), k("]", "&kp RIGHT_BRACE"), k(":", "&kp COLON"), tr()],
+        [tr(), k("6", "&kp N6"), k("7", "&kp N7"), k("8", "&kp N8"), k("9", "&kp N9"), k("0", "&kp N0"), tr(), tr(), k("_", "&kp LS(MINUS)"), k("+", "&kp LS(EQUAL)"), k("{", "&kp LEFT_BRACKET"), k("}", "&kp RIGHT_BRACKET"), k("\\", "&kp BACKSLASH"), tr()],
+        [tr(), tr(), tr(), tr(), tr(), tr(), tr(), tr(), k("TAB", "&kp TAB"), null, null, tr(), tr(), tr()]
+      ],
+      [
+        [tr(), k("F1"), k("F2"), k("F3"), k("F4"), k("F5"), k("HOME"), k("PG↑", "&kp PG_UP"), k("PG↓", "&kp PAGE_DOWN"), k("END"), k("ESC", "&kp ESCAPE"), tr()],
+        [tr(), k("F6"), k("F7"), k("F8"), k("F9"), k("F10"), k("←", "&kp LEFT"), k("↓", "&kp DOWN"), k("↑", "&kp UP_ARROW"), k("→", "&kp RIGHT"), k("TAB"), tr()],
+        [tr(), k("F11"), k("F12"), k("USB", "&out OUT_USB", "small"), k("BLE", "&out OUT_BLE", "small"), k("BT NEXT", "&bt BT_NXT", "small"), tr(), tr(), k("'", "&kp SINGLE_QUOTE"), k("\"", "&kp DQT"), k("`", "&kp GRAVE"), k("~", "&kp TILDE"), k("|", "&kp PIPE"), tr()],
+        [tr(), tr(), tr(), tr(), k("DEL", "&kp DELETE"), k("TAB", "&kp TAB"), tr(), tr(), tr(), null, null, tr(), tr(), tr()]
+      ]
+    ];
+
+    const keyboard = document.querySelector(".keyboard");
+    const tabs = document.querySelector(".tabs");
+    const title = document.querySelector("#title");
+
+    function render(layerIndex) {
+      title.textContent = `layer_${layerIndex}`;
+      keyboard.replaceChildren();
+
+      const axisRow = document.createElement("div");
+      axisRow.className = "axis-row";
+      const corner = document.createElement("div");
+      corner.className = "axis-corner";
+      const columnHeaders = document.createElement("div");
+      columnHeaders.className = "row column-headers";
+      Array.from({ length: 14 }, (_, colIndex) => {
+        const label = document.createElement("div");
+        label.className = "col-label";
+        if (colIndex === 7) label.classList.add("split");
+        label.textContent = `c${colIndex}`;
+        columnHeaders.append(label);
+      });
+      axisRow.append(corner, columnHeaders);
+      keyboard.append(axisRow);
+
+      layers[layerIndex].forEach((keys, rowIndex) => {
+        const rowShell = document.createElement("div");
+        rowShell.className = "row-shell";
+        const rowLabel = document.createElement("div");
+        rowLabel.className = "row-label";
+        rowLabel.textContent = `r${rowIndex}`;
+        const row = document.createElement("div");
+        const short = keys.length === 12;
+        row.className = `row${short ? " short" : ""}`;
+
+        keys.forEach((key, index) => {
+          const colIndex = short && index >= 6 ? index + 2 : index;
+          const coord = `r${rowIndex} c${colIndex}`;
+          if (key === null) {
+            const hole = document.createElement("div");
+            hole.className = "key-hole";
+            hole.setAttribute("aria-label", `${coord} キー未実装`);
+            row.append(hole);
+            return;
+          }
+          const keyEl = document.createElement("div");
+          const splitAt = keys.length / 2;
+          keyEl.className = `key ${key.extra}`.trim();
+          if (index === splitAt) keyEl.classList.add("split");
+          keyEl.title = `${coord} · ${key.action}`;
+          keyEl.innerHTML = `<span class="action">${key.action}</span><span class="label ${key.extra.includes("small") ? "small" : ""}">${key.label}</span>`;
+          row.append(keyEl);
+        });
+        rowShell.append(rowLabel, row);
+        keyboard.append(rowShell);
+      });
+
+      [...tabs.children].forEach((tab, index) => tab.setAttribute("aria-selected", String(index === layerIndex)));
+    }
+
+    layers.forEach((_, index) => {
+      const button = document.createElement("button");
+      button.type = "button";
+      button.textContent = `layer_${index}`;
+      button.addEventListener("click", () => render(index));
+      tabs.append(button);
+    });
+
+    render(0);
+  </script>
+</body>
+</html>
