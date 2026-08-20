@@ -16,8 +16,8 @@
       --muted: #94a3b8;
       --accent: #67e8f9;
       --accent-bg: #164e63;
-      --unit: clamp(52px, 5.4vw, 78px);
-      --gap: clamp(5px, .55vw, 9px);
+      --unit: clamp(48px, 5vw, 72px);
+      --gap: clamp(5px, .5vw, 8px);
     }
 
     * { box-sizing: border-box; }
@@ -33,7 +33,7 @@
     }
 
     main {
-      width: min(1480px, 100%);
+      width: min(1600px, 100%);
       margin: 0 auto;
       padding: clamp(20px, 4vw, 56px);
     }
@@ -86,7 +86,7 @@
     }
 
     .keyboard {
-      min-width: calc(var(--unit) * 14 + var(--gap) * 13 + clamp(80px, 9vw, 150px) + 36px);
+      min-width: calc(var(--unit) * 14 + var(--gap) * 13 + clamp(70px, 7vw, 110px) + 36px);
       display: grid;
       gap: var(--gap);
     }
@@ -127,12 +127,12 @@
 
     .row {
       display: grid;
-      grid-template-columns: repeat(7, var(--unit)) minmax(80px, 1fr) repeat(7, var(--unit));
+      grid-template-columns: repeat(7, var(--unit)) minmax(70px, 1fr) repeat(7, var(--unit));
       gap: var(--gap);
     }
 
     .row.short {
-      grid-template-columns: repeat(6, var(--unit)) calc(var(--unit) + var(--gap)) minmax(80px, 1fr) calc(var(--unit) + var(--gap)) repeat(6, var(--unit));
+      grid-template-columns: repeat(6, var(--unit)) calc(var(--unit) + var(--gap)) minmax(70px, 1fr) calc(var(--unit) + var(--gap)) repeat(6, var(--unit));
     }
 
     .row.short .split { grid-column: 10; }
