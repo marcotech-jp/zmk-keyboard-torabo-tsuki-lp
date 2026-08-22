@@ -31,7 +31,7 @@
             bindings = <
 &trans  &trans  &trans  &trans     &trans     &trans                  &trans  &trans     &trans  &trans    &trans  &trans
 &trans  &trans  &trans  &mkp RCLK  &mkp LCLK  &trans                  &trans  &mkp LCLK  &mkp RCLK  &mo 4  &trans  &trans
-&trans  &trans  &trans  &trans     &trans     &trans  &trans  &trans    &trans  &trans  &trans  &trans  &trans  &trans
+&trans  &trans  &trans  &trans     &lt 2 V    &kp SPACE  &trans  &trans    &trans  &trans  &trans  &trans  &trans  &trans
 &trans  &trans  &trans  &trans     &trans     &trans  &trans  &mkp MB5  &mkp MB4  &trans  &trans  &trans
             >;
         };
