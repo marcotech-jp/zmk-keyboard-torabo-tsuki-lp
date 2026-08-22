@@ -5,7 +5,7 @@ on:
     branches:
       - master
     paths:
-      - keymap-preview.html
+      - index.html
       - config/keymap.keymap
       - build.yaml
       - boards/shields/torabo_tsuki_lp/torabo_tsuki_lp_right.overlay
@@ -38,7 +38,7 @@ jobs:
           mkdir -p _site/config
           mkdir -p _site/boards/shields/torabo_tsuki_lp
           mkdir -p _site/snippets/input-trackball
-          cp keymap-preview.html _site/index.html
+          cp index.html _site/index.html
           cp config/keymap.keymap _site/config/keymap.keymap
           cp build.yaml _site/build.yaml
           cp boards/shields/torabo_tsuki_lp/torabo_tsuki_lp_right.overlay _site/boards/shields/torabo_tsuki_lp/torabo_tsuki_lp_right.overlay
