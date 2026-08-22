@@ -242,15 +242,15 @@
 
     const layers = [
       [
-        [k("ESC", "&kp ESCAPE"), k("Q"), k("W"), k("E"), k("R"), k("T"), k("Y"), k("U"), k("I"), k("O"), k("P"), k("@", "&kp LEFT_BRACKET")],
+        [k("ESC", "&kp ESCAPE"), k("Q"), k("W"), k("E"), k("R"), k("T"), k("Y"), k("4 U", "&lt 4 U", "layer-key small"), k("I"), k("O"), k("P"), k("@", "&kp LEFT_BRACKET")],
         [k("CTRL", "&kp LCTRL"), k("A"), k("S"), k("D"), k("F"), k("G"), k("H"), k("J"), k("K"), k("L"), k(";", "&kp SEMI"), k(":", "&kp SQT")],
         [k("⇧", "&kp LSHFT"), k("Z"), k("X"), k("C"), k("V"), k("B"), k("英数", "&kp LANGUAGE_2", "small"), k("日本語", "&kp LANGUAGE_1", "small"), k("N"), k("M"), k(",", "&kp COMMA"), k(".", "&kp DOT"), k("⇧ /", "&mt RSHIFT FSLH", "layer-key small"), k("⇧", "&kp RSHFT")],
         [k("—", "&none", "small"), k("—", "&none", "small"), k("◆", "&kp LGUI"), k("LALT", "&kp LALT"), k("—", "&none", "small"), k("2 ␠", "&lt 2 SPACE", "layer-key small"), k("L CLICK", "&mkp LCLK", "small"), k("⌫", "&kp BSPC"), k("3 ↵", "&lt 3 ENTER", "layer-key small"), null, null, k("←", "&kp LEFT"), k("↓", "&kp DOWN"), k("→", "&kp RIGHT")]
       ],
       [
-        Array.from({ length: 12 }, tr),
+        [tr(), tr(), tr(), tr(), tr(), tr(), tr(), k("4 U", "&lt 4 U", "layer-key small"), tr(), tr(), tr(), tr()],
         [tr(), tr(), tr(), k("R CLICK", "&mkp RCLK", "small"), k("L CLICK", "&mkp LCLK", "small"), tr(), tr(), k("L CLICK", "&mkp LCLK", "small"), k("R CLICK", "&mkp RCLK", "small"), tr(), tr(), tr()],
-        Array.from({ length: 14 }, tr),
+        [tr(), tr(), tr(), tr(), tr(), tr(), k("BACK", "&mkp MB4", "small"), k("FORWARD", "&mkp MB5", "small"), tr(), tr(), tr(), tr(), tr(), tr()],
         [...Array.from({ length: 9 }, tr), null, null, ...Array.from({ length: 3 }, tr)]
       ],
       [
@@ -264,6 +264,12 @@
         [tr(), k("F6"), k("F7"), k("F8"), k("F9"), k("F10"), k("←", "&kp LEFT"), k("↓", "&kp DOWN"), k("↑", "&kp UP_ARROW"), k("→", "&kp RIGHT"), k("TAB"), tr()],
         [tr(), k("F11"), k("F12"), k("USB", "&out OUT_USB", "small"), k("BLE", "&out OUT_BLE", "small"), k("BT NEXT", "&bt BT_NXT", "small"), tr(), tr(), k("'", "&kp SINGLE_QUOTE"), k("\"", "&kp DQT"), k("`", "&kp GRAVE"), k("~", "&kp TILDE"), k("|", "&kp PIPE"), tr()],
         [tr(), tr(), tr(), tr(), k("DEL", "&kp DELETE"), k("TAB", "&kp TAB"), tr(), tr(), tr(), null, null, tr(), tr(), tr()]
+      ],
+      [
+        Array.from({ length: 12 }, tr),
+        Array.from({ length: 12 }, tr),
+        Array.from({ length: 14 }, tr),
+        [...Array.from({ length: 9 }, tr), null, null, ...Array.from({ length: 3 }, tr)]
       ]
     ];
 
