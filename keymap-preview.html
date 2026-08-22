@@ -396,6 +396,10 @@
         label = `${params[0]} ${keycodeLabel(params[1])}`;
         extra = "layer-key";
       }
+      if (behavior === "&mo") {
+        label = `SCROLL ${params[0]}`;
+        extra = "layer-key";
+      }
       if (behavior === "&mt") {
         label = `${keycodeLabel(params[0])} ${keycodeLabel(params[1])}`;
         extra = "layer-key";
