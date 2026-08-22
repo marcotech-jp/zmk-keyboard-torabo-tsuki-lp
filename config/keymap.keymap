@@ -32,7 +32,7 @@
 &trans  &trans  &trans  &trans     &trans     &trans                  &trans  &trans     &trans  &trans    &trans  &trans
 &trans  &trans  &trans  &trans     &trans     &trans                  &trans  &mkp LCLK  &mkp RCLK  &mo 4  &trans  &trans
 &trans  &trans  &trans  &trans     &trans     &trans  &trans  &trans    &trans  &trans  &trans  &trans  &trans  &kp LSHFT
-&trans  &trans  &trans  &trans     &trans     &none        &none  &mkp MB5  &mkp MB4  &kp LEFT  &trans  &kp RIGHT
+&trans  &trans  &trans  &trans     &trans     &none        &none  &mkp MB4  &mkp MB5  &kp LEFT  &trans  &kp RIGHT
             >;
         };
 
