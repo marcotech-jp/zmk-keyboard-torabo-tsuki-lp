@@ -16,6 +16,9 @@
       --muted: #94a3b8;
       --accent: #67e8f9;
       --accent-bg: #164e63;
+      --layer-key-bg: #203b47;
+      --layer-key-border: #0e7490;
+      --layer-key-text: #e5e7eb;
       --code-bg: #0f1720;
       --unit: clamp(48px, 5vw, 72px);
       --gap: clamp(5px, .5vw, 8px);
@@ -32,6 +35,9 @@
       --muted: #5d7180;
       --accent: #08758a;
       --accent-bg: #d8f4f8;
+      --layer-key-bg: #dbeafe;
+      --layer-key-border: #2563eb;
+      --layer-key-text: #1e3a8a;
       --code-bg: #e7eef2;
     }
 
@@ -177,11 +183,19 @@
       box-shadow: 0 2px 0 rgba(0, 0, 0, .25);
       text-align: center;
       transition: .15s ease;
+      cursor: pointer;
     }
 
     .key:hover { transform: translateY(-2px); background: var(--key-hover); border-color: var(--border); }
+    .key:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+    .key:active { transform: translateY(1px); }
     .key.transparent { opacity: .46; }
-    .key.layer-key { border-color: #0e7490; background: #203b47; }
+    .key.layer-key {
+      border-color: var(--layer-key-border);
+      background: var(--layer-key-bg);
+      color: var(--layer-key-text);
+    }
+    .key.layer-key .action { color: var(--layer-key-text); opacity: .72; }
 
     .key-hole {
       height: var(--unit);
@@ -287,6 +301,27 @@
 
     .setting code { background: var(--code-bg); }
 
+    .copy-toast {
+      position: fixed;
+      right: 20px;
+      bottom: 20px;
+      z-index: 10;
+      padding: 10px 14px;
+      border: 1px solid var(--layer-key-border);
+      border-radius: 9px;
+      background: var(--panel);
+      color: var(--text);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, .2);
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 12px;
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(8px);
+      transition: opacity .15s ease, transform .15s ease;
+    }
+
+    .copy-toast.visible { opacity: 1; transform: translateY(0); }
+
     @media (max-width: 700px) {
       header { align-items: start; flex-direction: column; }
       .tabs { justify-content: flex-start; }
@@ -312,8 +347,9 @@
 
     <footer>
       <span><i class="dot"></i>通常キー</span>
-      <span><i class="dot layer"></i>レイヤー操作を含むキー</span>
+      <span><i class="dot layer"></i>長押し・レイヤー切替などの特殊キー</span>
       <span>▽ = 下位レイヤーの設定を継承</span>
+      <span>キーをクリック = layer・row・colをコピー</span>
     </footer>
 
     <section class="settings" aria-labelledby="settings-title">
@@ -322,6 +358,7 @@
       <dl class="settings-grid"></dl>
     </section>
   </main>
+  <div class="copy-toast" role="status" aria-live="polite"></div>
 
   <script>
     const KEYMAP_URL = "config/keymap.keymap";
@@ -358,7 +395,9 @@
     const settingsStatus = document.querySelector("#settings-status");
     const settingsGrid = document.querySelector(".settings-grid");
     const themeToggle = document.querySelector(".theme-toggle");
+    const copyToast = document.querySelector(".copy-toast");
     let layers = [];
+    let copyToastTimer;
 
     function setTheme(theme) {
       document.documentElement.dataset.theme = theme;
@@ -516,6 +555,32 @@
       }
     }
 
+    async function copyCoordinate(layerName, rowIndex, colIndex) {
+      const text = layerName + " r" + rowIndex + " c" + colIndex;
+      try {
+        if (navigator.clipboard && window.isSecureContext) {
+          await navigator.clipboard.writeText(text);
+        } else {
+          const textarea = document.createElement("textarea");
+          textarea.value = text;
+          textarea.style.position = "fixed";
+          textarea.style.opacity = "0";
+          document.body.append(textarea);
+          textarea.select();
+          const copied = document.execCommand("copy");
+          textarea.remove();
+          if (!copied) throw new Error("copy command failed");
+        }
+        copyToast.textContent = text + " をコピーしました";
+      } catch (error) {
+        copyToast.textContent = "コピーできませんでした";
+        console.error(error);
+      }
+      copyToast.classList.add("visible");
+      clearTimeout(copyToastTimer);
+      copyToastTimer = setTimeout(() => copyToast.classList.remove("visible"), 1800);
+    }
+
     function render(layerIndex) {
       title.textContent = layers[layerIndex].name;
       keyboard.replaceChildren();
@@ -560,7 +625,18 @@
           const splitAt = keys.length / 2;
           keyEl.className = `key ${key.extra}`.trim();
           if (index === splitAt) keyEl.classList.add("split");
-          keyEl.title = `${coord} · ${key.action}`;
+          keyEl.title = coord + " · " + key.action;
+          keyEl.tabIndex = 0;
+          keyEl.setAttribute("role", "button");
+          keyEl.setAttribute("aria-label", layers[layerIndex].name + " " + coord + " " + key.action + "。クリックで座標をコピー");
+          const copy = () => copyCoordinate(layers[layerIndex].name, rowIndex, colIndex);
+          keyEl.addEventListener("click", copy);
+          keyEl.addEventListener("keydown", (event) => {
+            if (event.key === "Enter" || event.key === " ") {
+              event.preventDefault();
+              copy();
+            }
+          });
           const action = document.createElement("span");
           action.className = "action";
           action.textContent = key.action;
