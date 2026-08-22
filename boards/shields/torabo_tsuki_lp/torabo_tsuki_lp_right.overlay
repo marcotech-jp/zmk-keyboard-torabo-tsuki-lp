@@ -5,7 +5,7 @@
 &pointing_listener {
     input-processors = <
         &zip_xy_transform (INPUT_TRANSFORM_X_INVERT | INPUT_TRANSFORM_Y_INVERT)
-        &zip_temp_layer 1 1000
+        &zip_temp_layer 1 3000
     >;
 
     scroll_mode {
@@ -20,7 +20,7 @@
 
 &zip_temp_layer {
     require-prior-idle-ms = <500>;
-    excluded-positions = <7 15 16 19 20 36 37>;
+    excluded-positions = <15 16 19 20 21 36 37>;
 };
 
 &size_s_transform {
