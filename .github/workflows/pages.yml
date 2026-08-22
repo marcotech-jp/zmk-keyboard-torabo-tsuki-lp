@@ -6,6 +6,11 @@ on:
       - master
     paths:
       - keymap-preview.html
+      - config/keymap.keymap
+      - build.yaml
+      - boards/shields/torabo_tsuki_lp/torabo_tsuki_lp_right.overlay
+      - snippets/input-trackball/input-trackball.overlay
+      - snippets/input-trackball/input-trackball.conf
       - .github/workflows/pages.yml
   workflow_dispatch:
 
@@ -30,8 +35,15 @@ jobs:
 
       - name: Prepare static site
         run: |
-          mkdir -p _site
+          mkdir -p _site/config
+          mkdir -p _site/boards/shields/torabo_tsuki_lp
+          mkdir -p _site/snippets/input-trackball
           cp keymap-preview.html _site/index.html
+          cp config/keymap.keymap _site/config/keymap.keymap
+          cp build.yaml _site/build.yaml
+          cp boards/shields/torabo_tsuki_lp/torabo_tsuki_lp_right.overlay _site/boards/shields/torabo_tsuki_lp/torabo_tsuki_lp_right.overlay
+          cp snippets/input-trackball/input-trackball.overlay _site/snippets/input-trackball/input-trackball.overlay
+          cp snippets/input-trackball/input-trackball.conf _site/snippets/input-trackball/input-trackball.conf
 
       - name: Configure GitHub Pages
         uses: actions/configure-pages@v5

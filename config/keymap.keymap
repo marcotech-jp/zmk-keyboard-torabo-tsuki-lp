@@ -31,8 +31,8 @@
             bindings = <
 &trans  &trans  &trans  &trans     &trans     &trans                  &trans  &lt 4 U  &trans  &trans  &trans  &trans
 &trans  &trans  &trans  &mkp RCLK  &mkp LCLK  &trans                  &trans  &mkp LCLK  &mkp RCLK  &trans  &trans  &trans
-&trans  &trans  &trans  &trans     &trans     &trans  &mkp MB4  &mkp MB5  &trans  &trans  &trans  &trans  &trans  &trans
-&trans  &trans  &trans  &trans     &trans     &trans  &trans  &trans  &trans  &trans     &trans     &trans  &trans  &trans
+&trans  &trans  &trans  &trans     &trans     &trans  &trans  &trans  &trans  &trans  &trans  &trans  &mkp MB5  &mkp MB4
+&trans  &trans  &trans  &trans     &trans     &trans  &trans  &trans  &trans  &trans     &trans     &trans
             >;
         };
 

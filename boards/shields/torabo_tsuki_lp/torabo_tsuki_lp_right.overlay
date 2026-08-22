@@ -9,9 +9,9 @@
     >;
 
     scroll_mode {
-        layers = <4>;
+        layers = <1>;
         input-processors = <
-            &zip_xy_transform (INPUT_TRANSFORM_X_INVERT | INPUT_TRANSFORM_Y_INVERT)
+            &zip_xy_transform INPUT_TRANSFORM_X_INVERT
             &zip_xy_to_scroll_mapper
         >;
         process-next;
@@ -20,7 +20,7 @@
 
 &zip_temp_layer {
     require-prior-idle-ms = <500>;
-    excluded-positions = <7 15 16 19 20 30 31>;
+    excluded-positions = <7 15 16 19 20 36 37>;
 };
 
 &size_s_transform {

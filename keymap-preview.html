@@ -16,8 +16,23 @@
       --muted: #94a3b8;
       --accent: #67e8f9;
       --accent-bg: #164e63;
+      --code-bg: #0f1720;
       --unit: clamp(48px, 5vw, 72px);
       --gap: clamp(5px, .5vw, 8px);
+    }
+
+    :root[data-theme="light"] {
+      color-scheme: light;
+      --bg: #eef4f7;
+      --panel: #ffffff;
+      --key: #f8fafc;
+      --key-hover: #e8f5f8;
+      --border: #b8c8d2;
+      --text: #17212b;
+      --muted: #5d7180;
+      --accent: #08758a;
+      --accent-bg: #d8f4f8;
+      --code-bg: #e7eef2;
     }
 
     * { box-sizing: border-box; }
@@ -44,6 +59,14 @@
       justify-content: space-between;
       gap: 24px;
       margin-bottom: 28px;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 10px;
+      flex-wrap: wrap;
     }
 
     h1 {
@@ -79,6 +102,12 @@
 
     button:hover { color: var(--text); border-color: #527086; }
     button[aria-selected="true"] { color: var(--accent); background: var(--accent-bg); border-color: #0e7490; }
+
+    .theme-toggle {
+      min-width: 44px;
+      padding-inline: 11px;
+      color: var(--text);
+    }
 
     .viewport {
       overflow-x: auto;
@@ -209,6 +238,55 @@
 
     .dot.layer { border-color: #0e7490; background: #203b47; }
 
+    .settings {
+      margin-top: 28px;
+      padding: clamp(16px, 2.5vw, 26px);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      background: var(--panel);
+    }
+
+    .settings h2 {
+      margin: 0;
+      font-size: 18px;
+    }
+
+    .settings-status {
+      margin: 5px 0 18px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .settings-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+      gap: 10px;
+    }
+
+    .setting {
+      min-width: 0;
+      padding: 12px;
+      border: 1px solid var(--border);
+      border-radius: 9px;
+      background: var(--bg);
+    }
+
+    .setting dt {
+      margin-bottom: 6px;
+      color: var(--muted);
+      font-size: 11px;
+    }
+
+    .setting dd {
+      margin: 0;
+      overflow-wrap: anywhere;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
+    .setting code { background: var(--code-bg); }
+
     @media (max-width: 700px) {
       header { align-items: start; flex-direction: column; }
       .tabs { justify-content: flex-start; }
@@ -220,9 +298,12 @@
     <header>
       <div>
         <h1 id="title">layer_0</h1>
-        <p class="subtitle">torabo-tsuki LP · M Layout · 4 rows · 50 keys</p>
+        <p id="status" class="subtitle">config/keymap.keymap を読み込んでいます…</p>
       </div>
-      <nav class="tabs" aria-label="レイヤー選択"></nav>
+      <div class="header-actions">
+        <nav class="tabs" aria-label="レイヤー選択"></nav>
+        <button class="theme-toggle" type="button" aria-label="ライトモードに切り替え" title="テーマ切替">☀︎</button>
+      </div>
     </header>
 
     <div class="viewport">
@@ -234,51 +315,205 @@
       <span><i class="dot layer"></i>レイヤー操作を含むキー</span>
       <span>▽ = 下位レイヤーの設定を継承</span>
     </footer>
+
+    <section class="settings" aria-labelledby="settings-title">
+      <h2 id="settings-title">ポインティング設定</h2>
+      <p id="settings-status" class="settings-status">マウス関連の設定ファイルを読み込んでいます…</p>
+      <dl class="settings-grid"></dl>
+    </section>
   </main>
 
   <script>
-    const k = (label, action = "&kp", extra = "") => ({ label, action, extra });
-    const tr = () => k("▽", "&trans", "transparent");
-
-    const layers = [
-      [
-        [k("ESC", "&kp ESCAPE"), k("Q"), k("W"), k("E"), k("R"), k("T"), k("Y"), k("4 U", "&lt 4 U", "layer-key small"), k("I"), k("O"), k("P"), k("@", "&kp LEFT_BRACKET")],
-        [k("CTRL", "&kp LCTRL"), k("A"), k("S"), k("D"), k("F"), k("G"), k("H"), k("J"), k("K"), k("L"), k(";", "&kp SEMI"), k(":", "&kp SQT")],
-        [k("⇧", "&kp LSHFT"), k("Z"), k("X"), k("C"), k("V"), k("B"), k("英数", "&kp LANGUAGE_2", "small"), k("日本語", "&kp LANGUAGE_1", "small"), k("N"), k("M"), k(",", "&kp COMMA"), k(".", "&kp DOT"), k("⇧ /", "&mt RSHIFT FSLH", "layer-key small"), k("⇧", "&kp RSHFT")],
-        [k("—", "&none", "small"), k("—", "&none", "small"), k("◆", "&kp LGUI"), k("LALT", "&kp LALT"), k("—", "&none", "small"), k("2 ␠", "&lt 2 SPACE", "layer-key small"), k("L CLICK", "&mkp LCLK", "small"), k("⌫", "&kp BSPC"), k("3 ↵", "&lt 3 ENTER", "layer-key small"), null, null, k("←", "&kp LEFT"), k("↓", "&kp DOWN"), k("→", "&kp RIGHT")]
-      ],
-      [
-        [tr(), tr(), tr(), tr(), tr(), tr(), tr(), k("4 U", "&lt 4 U", "layer-key small"), tr(), tr(), tr(), tr()],
-        [tr(), tr(), tr(), k("R CLICK", "&mkp RCLK", "small"), k("L CLICK", "&mkp LCLK", "small"), tr(), tr(), k("L CLICK", "&mkp LCLK", "small"), k("R CLICK", "&mkp RCLK", "small"), tr(), tr(), tr()],
-        [tr(), tr(), tr(), tr(), tr(), tr(), k("BACK", "&mkp MB4", "small"), k("FORWARD", "&mkp MB5", "small"), tr(), tr(), tr(), tr(), tr(), tr()],
-        [...Array.from({ length: 9 }, tr), null, null, ...Array.from({ length: 3 }, tr)]
-      ],
-      [
-        [tr(), k("!", "&kp LS(NUMBER_1)"), k("@", "&kp LS(NUMBER_2)"), k("#", "&kp LS(N3)"), k("$", "&kp LS(N4)"), k("%", "&kp LS(N5)"), k("^", "&kp LS(N6)"), k("&", "&kp LS(N7)"), k("*", "&kp LS(N8)"), k("(", "&kp LS(N9)"), k(")", "&kp LS(N0)"), tr()],
-        [tr(), k("1", "&kp N1"), k("2", "&kp N2"), k("3", "&kp N3"), k("4", "&kp N4"), k("5", "&kp N5"), k("[", "&kp LEFT_BRACE"), k("-", "&kp MINUS"), k("=", "&kp EQUAL"), k("]", "&kp RIGHT_BRACE"), k(":", "&kp COLON"), tr()],
-        [tr(), k("6", "&kp N6"), k("7", "&kp N7"), k("8", "&kp N8"), k("9", "&kp N9"), k("0", "&kp N0"), tr(), tr(), k("_", "&kp LS(MINUS)"), k("+", "&kp LS(EQUAL)"), k("{", "&kp LEFT_BRACKET"), k("}", "&kp RIGHT_BRACKET"), k("\\", "&kp BACKSLASH"), tr()],
-        [tr(), tr(), tr(), tr(), tr(), tr(), tr(), tr(), k("TAB", "&kp TAB"), null, null, tr(), tr(), tr()]
-      ],
-      [
-        [tr(), k("F1"), k("F2"), k("F3"), k("F4"), k("F5"), k("HOME"), k("PG↑", "&kp PG_UP"), k("PG↓", "&kp PAGE_DOWN"), k("END"), k("ESC", "&kp ESCAPE"), tr()],
-        [tr(), k("F6"), k("F7"), k("F8"), k("F9"), k("F10"), k("←", "&kp LEFT"), k("↓", "&kp DOWN"), k("↑", "&kp UP_ARROW"), k("→", "&kp RIGHT"), k("TAB"), tr()],
-        [tr(), k("F11"), k("F12"), k("USB", "&out OUT_USB", "small"), k("BLE", "&out OUT_BLE", "small"), k("BT NEXT", "&bt BT_NXT", "small"), tr(), tr(), k("'", "&kp SINGLE_QUOTE"), k("\"", "&kp DQT"), k("`", "&kp GRAVE"), k("~", "&kp TILDE"), k("|", "&kp PIPE"), tr()],
-        [tr(), tr(), tr(), tr(), k("DEL", "&kp DELETE"), k("TAB", "&kp TAB"), tr(), tr(), tr(), null, null, tr(), tr(), tr()]
-      ],
-      [
-        Array.from({ length: 12 }, tr),
-        Array.from({ length: 12 }, tr),
-        Array.from({ length: 14 }, tr),
-        [...Array.from({ length: 9 }, tr), null, null, ...Array.from({ length: 3 }, tr)]
-      ]
-    ];
-
+    const KEYMAP_URL = "config/keymap.keymap";
+    const POINTING_CONFIG_URLS = {
+      build: "build.yaml",
+      shield: "boards/shields/torabo_tsuki_lp/torabo_tsuki_lp_right.overlay",
+      device: "snippets/input-trackball/input-trackball.overlay",
+      driver: "snippets/input-trackball/input-trackball.conf"
+    };
+    const ROW_LENGTHS = [12, 12, 14, 12];
+    const KEY_LABELS = {
+      ESCAPE: "ESC", LCTRL: "CTRL", LSHFT: "⇧", RSHFT: "⇧", RIGHT_SHIFT: "⇧",
+      LGUI: "◆", LALT: "LALT", LANGUAGE_2: "英数", LANGUAGE_1: "日本語",
+      COMMA: ",", DOT: ".", FSLH: "/", SPACE: "␠", BSPC: "⌫", ENTER: "↵",
+      LEFT: "←", RIGHT: "→", DOWN: "↓", UP: "↑", UP_ARROW: "↑",
+      PG_UP: "PG↑", PAGE_DOWN: "PG↓", DELETE: "DEL", SINGLE_QUOTE: "'", SQT: ":",
+      DQT: "\"", GRAVE: "`", TILDE: "~", PIPE: "|", SEMI: ";", COLON: ":",
+      MINUS: "-", EQUAL: "=", LEFT_BRACE: "[", RIGHT_BRACE: "]",
+      LEFT_BRACKET: "{", RIGHT_BRACKET: "}", BACKSLASH: "\\"
+    };
+    const SHIFTED_LABELS = {
+      N0: ")", N1: "!", N2: "@", N3: "#", N4: "$", N5: "%",
+      N6: "^", N7: "&", N8: "*", N9: "(",
+      NUMBER_1: "!", NUMBER_2: "@", MINUS: "_", EQUAL: "+"
+    };
+    const MOUSE_LABELS = {
+      LCLK: "L CLICK", RCLK: "R CLICK", MCLK: "M CLICK",
+      MB1: "L CLICK", MB2: "R CLICK", MB3: "M CLICK", MB4: "BACK", MB5: "FORWARD"
+    };
     const keyboard = document.querySelector(".keyboard");
     const tabs = document.querySelector(".tabs");
     const title = document.querySelector("#title");
+    const status = document.querySelector("#status");
+    const settingsStatus = document.querySelector("#settings-status");
+    const settingsGrid = document.querySelector(".settings-grid");
+    const themeToggle = document.querySelector(".theme-toggle");
+    let layers = [];
+
+    function setTheme(theme) {
+      document.documentElement.dataset.theme = theme;
+      const dark = theme === "dark";
+      themeToggle.textContent = dark ? "☀︎" : "☾";
+      themeToggle.setAttribute("aria-label", `${dark ? "ライト" : "ダーク"}モードに切り替え`);
+      localStorage.setItem("keymap-preview-theme", theme);
+    }
+
+    function initializeTheme() {
+      const saved = localStorage.getItem("keymap-preview-theme");
+      const preferred = matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+      setTheme(saved === "dark" || saved === "light" ? saved : preferred);
+      themeToggle.addEventListener("click", () => {
+        setTheme(document.documentElement.dataset.theme === "dark" ? "light" : "dark");
+      });
+    }
+
+    function keycodeLabel(keycode) {
+      const shifted = keycode.match(/^LS\((.+)\)$/);
+      if (shifted) return SHIFTED_LABELS[shifted[1]] ?? `⇧ ${keycodeLabel(shifted[1])}`;
+      if (/^(?:N|NUMBER_)\d$/.test(keycode)) return keycode.at(-1);
+      return KEY_LABELS[keycode] ?? keycode;
+    }
+
+    function keyFromAction(action) {
+      const [behavior, ...params] = action.split(/\s+/);
+      let label = action;
+      let extra = "";
+
+      if (behavior === "&trans") return { label: "▽", action, extra: "transparent" };
+      if (behavior === "&none") return { label: "—", action, extra: "small" };
+      if (behavior === "&kp") label = keycodeLabel(params[0]);
+      if (behavior === "&lt") {
+        label = `${params[0]} ${keycodeLabel(params[1])}`;
+        extra = "layer-key";
+      }
+      if (behavior === "&mt") {
+        label = `${keycodeLabel(params[0])} ${keycodeLabel(params[1])}`;
+        extra = "layer-key";
+      }
+      if (behavior === "&mkp") label = MOUSE_LABELS[params[0]] ?? params[0];
+      if (behavior === "&out") label = params[0]?.replace("OUT_", "") ?? action;
+      if (behavior === "&bt") label = params[0] === "BT_NXT" ? "BT NEXT" : params.join(" ");
+      if (label.length > 7) extra = `${extra} small`.trim();
+
+      return { label, action, extra };
+    }
+
+    function parseBindings(source) {
+      const cleaned = source
+        .replace(/\/\*[\s\S]*?\*\//g, "")
+        .replace(/\/\/.*$/gm, "");
+      const starts = [...cleaned.matchAll(/&[A-Za-z0-9_]+/g)].map((match) => match.index);
+      return starts.map((start, index) => {
+        const end = starts[index + 1] ?? cleaned.length;
+        return cleaned.slice(start, end).trim().replace(/\s+/g, " ");
+      });
+    }
+
+    function rowsFromBindings(bindings, layerName) {
+      const expectedCount = ROW_LENGTHS.reduce((total, length) => total + length, 0);
+      if (bindings.length !== expectedCount) {
+        throw new Error(`${layerName}: bindingsは${expectedCount}個必要ですが、${bindings.length}個あります`);
+      }
+
+      let offset = 0;
+      return ROW_LENGTHS.map((length, rowIndex) => {
+        const row = bindings.slice(offset, offset + length).map(keyFromAction);
+        offset += length;
+        return rowIndex === 3 ? [...row.slice(0, 9), null, null, ...row.slice(9)] : row;
+      });
+    }
+
+    function parseKeymap(source) {
+      const parsedLayers = [];
+      const layerPattern = /\b(layer_[A-Za-z0-9_]+)\s*\{[\s\S]*?bindings\s*=\s*<([\s\S]*?)>;[\s\S]*?\};/g;
+      for (const match of source.matchAll(layerPattern)) {
+        parsedLayers.push({
+          name: match[1],
+          rows: rowsFromBindings(parseBindings(match[2]), match[1])
+        });
+      }
+      if (parsedLayers.length === 0) throw new Error("レイヤー設定が見つかりません");
+      return parsedLayers;
+    }
+
+    function capture(source, pattern, fallback = "—") {
+      return source.match(pattern)?.[1]?.trim().replace(/\s+/g, " ") ?? fallback;
+    }
+
+    function transformLabel(value) {
+      const flags = [...value.matchAll(/INPUT_TRANSFORM_([A-Z_]+)/g)].map((match) => match[1]);
+      return flags.length ? flags.join(" + ") : "なし";
+    }
+
+    function parsePointingSettings(files) {
+      const listener = capture(files.shield, /&pointing_listener\s*\{([\s\S]*?)\n\s*scroll_mode\s*\{/);
+      const scroll = capture(files.shield, /scroll_mode\s*\{([\s\S]*?)\n\s*\};/);
+      const tempLayer = files.shield.match(/&zip_temp_layer\s+(\d+)\s+(\d+)/);
+      const snippets = capture(files.build, /shield:\s*torabo_tsuki_lp_right[\s\S]*?snippet:\s*["']?([^"'\n]+)/);
+      const compatible = capture(files.device, /pointing_device[^\{]*\{[\s\S]*?compatible\s*=\s*"([^"]+)"/);
+      const frequency = capture(files.device, /spi-max-frequency\s*=\s*<(\d+)>/);
+      const idle = capture(files.shield, /require-prior-idle-ms\s*=\s*<(\d+)>/);
+      const exclusions = capture(files.shield, /excluded-positions\s*=\s*<([^>]+)>/);
+      const scrollLayers = capture(scroll, /layers\s*=\s*<([^>]+)>/);
+
+      return [
+        ["ビルド", `right / central`],
+        ["入力デバイス", compatible],
+        ["ドライバー", capture(files.driver, /CONFIG_([A-Z0-9_]+)=y/)],
+        ["SPI 周波数", frequency === "—" ? frequency : `${Number(frequency).toLocaleString()} Hz`],
+        ["通常時の軸変換", transformLabel(listener)],
+        ["一時マウスレイヤー", tempLayer ? `layer ${tempLayer[1]} / ${tempLayer[2]} ms` : "なし"],
+        ["スクロールレイヤー", scrollLayers],
+        ["スクロール時の軸変換", transformLabel(scroll)],
+        ["XY → スクロール", scroll.includes("zip_xy_to_scroll_mapper") ? "有効" : "無効"],
+        ["一時レイヤー待機時間", idle === "—" ? idle : `${idle} ms`],
+        ["一時レイヤー除外位置", exclusions],
+        ["使用 snippet", snippets]
+      ];
+    }
+
+    function renderPointingSettings(settings) {
+      settingsGrid.replaceChildren(...settings.map(([name, value]) => {
+        const item = document.createElement("div");
+        item.className = "setting";
+        const term = document.createElement("dt");
+        term.textContent = name;
+        const detail = document.createElement("dd");
+        detail.textContent = value;
+        item.append(term, detail);
+        return item;
+      }));
+    }
+
+    async function loadText(url) {
+      const response = await fetch(url, { cache: "no-cache" });
+      if (!response.ok) throw new Error(`${url}: HTTP ${response.status}`);
+      return response.text();
+    }
+
+    async function initializePointingSettings() {
+      try {
+        const entries = await Promise.all(Object.entries(POINTING_CONFIG_URLS).map(async ([name, url]) => [name, await loadText(url)]));
+        renderPointingSettings(parsePointingSettings(Object.fromEntries(entries)));
+        settingsStatus.textContent = Object.values(POINTING_CONFIG_URLS).join(" · ");
+      } catch (error) {
+        settingsStatus.textContent = `読み込みエラー: ${error.message}`;
+        console.error(error);
+      }
+    }
 
     function render(layerIndex) {
-      title.textContent = `layer_${layerIndex}`;
+      title.textContent = layers[layerIndex].name;
       keyboard.replaceChildren();
 
       const axisRow = document.createElement("div");
@@ -297,7 +532,7 @@
       axisRow.append(corner, columnHeaders);
       keyboard.append(axisRow);
 
-      layers[layerIndex].forEach((keys, rowIndex) => {
+      layers[layerIndex].rows.forEach((keys, rowIndex) => {
         const rowShell = document.createElement("div");
         rowShell.className = "row-shell";
         const rowLabel = document.createElement("div");
@@ -322,7 +557,13 @@
           keyEl.className = `key ${key.extra}`.trim();
           if (index === splitAt) keyEl.classList.add("split");
           keyEl.title = `${coord} · ${key.action}`;
-          keyEl.innerHTML = `<span class="action">${key.action}</span><span class="label ${key.extra.includes("small") ? "small" : ""}">${key.label}</span>`;
+          const action = document.createElement("span");
+          action.className = "action";
+          action.textContent = key.action;
+          const label = document.createElement("span");
+          label.className = `label${key.extra.includes("small") ? " small" : ""}`;
+          label.textContent = key.label;
+          keyEl.append(action, label);
           row.append(keyEl);
         });
         rowShell.append(rowLabel, row);
@@ -332,15 +573,30 @@
       [...tabs.children].forEach((tab, index) => tab.setAttribute("aria-selected", String(index === layerIndex)));
     }
 
-    layers.forEach((_, index) => {
-      const button = document.createElement("button");
-      button.type = "button";
-      button.textContent = `layer_${index}`;
-      button.addEventListener("click", () => render(index));
-      tabs.append(button);
-    });
+    async function initialize() {
+      try {
+        layers = parseKeymap(await loadText(KEYMAP_URL));
+        status.textContent = `torabo-tsuki LP · M Layout · ${layers.length} layers · ${KEYMAP_URL}`;
 
-    render(0);
+        layers.forEach((layer, index) => {
+          const button = document.createElement("button");
+          button.type = "button";
+          button.textContent = layer.name;
+          button.addEventListener("click", () => render(index));
+          tabs.append(button);
+        });
+        render(0);
+      } catch (error) {
+        title.textContent = "読み込みエラー";
+        status.textContent = error.message;
+        keyboard.textContent = `${KEYMAP_URL} を読み込めませんでした。HTTPサーバー経由で開いてください。`;
+        console.error(error);
+      }
+    }
+
+    initializeTheme();
+    initialize();
+    initializePointingSettings();
   </script>
 </body>
 </html>
