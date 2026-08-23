@@ -1,5 +1,16 @@
 name: Build ZMK firmware
-on: [push, pull_request, workflow_dispatch]
+
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - build.yaml
+      - config/**
+      - boards/**
+      - snippets/**
+      - .github/workflows/build.yml
+  workflow_dispatch:
 
 jobs:
   build:
