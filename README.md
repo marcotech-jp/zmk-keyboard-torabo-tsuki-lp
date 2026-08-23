@@ -1,9 +1,13 @@
+# このリポジトリは[sekigon-gonnoc/torabo-tsuki-lp](https://github.com/sekigon-gonnoc/torabo-tsuki-lp)のフォークです。
 
 [torabo-tsuki LP](https://github.com/sekigon-gonnoc/torabo-tsuki-lp)用のZMKファームウェア
+* [キーマッププレビュー](https://marcotech-jp.github.io/zmk-keyboard-torabo-tsuki-lp/)
+
+## 使い方
 
 * _centralがついているuf2をトラックボールがついている方に、_peripheralを反対側に書き込んでください
 * キーマップはkeymap-editorおよびzmk-studioで編集できます
-* [キーマッププレビュー](https://marcotech-jp.github.io/zmk-keyboard-torabo-tsuki-lp/)
+  * <https://nickcoutsos.github.io/keymap-editor/>
 
 ## レイヤー構成
 
