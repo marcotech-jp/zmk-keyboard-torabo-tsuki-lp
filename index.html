@@ -1,5 +1,6 @@
 <!doctype html>
 <html lang="ja">
+
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -19,7 +20,9 @@
       --layer-key-bg: #203b47;
       --layer-key-border: #0e7490;
       --layer-key-text: #e5e7eb;
-      --code-bg: #0f1720;
+      --none-key-bg: #34252c;
+      --none-key-border: #6b3848;
+      --none-key-text: #d8a4b4;
       --unit: clamp(48px, 5vw, 72px);
       --gap: clamp(5px, .5vw, 8px);
     }
@@ -38,10 +41,14 @@
       --layer-key-bg: #dbeafe;
       --layer-key-border: #2563eb;
       --layer-key-text: #1e3a8a;
-      --code-bg: #e7eef2;
+      --none-key-bg: #f7e8ed;
+      --none-key-border: #d7a9b7;
+      --none-key-text: #854154;
     }
 
-    * { box-sizing: border-box; }
+    * {
+      box-sizing: border-box;
+    }
 
     body {
       margin: 0;
@@ -106,8 +113,16 @@
       transition: .15s ease;
     }
 
-    button:hover { color: var(--text); border-color: #527086; }
-    button[aria-selected="true"] { color: var(--accent); background: var(--accent-bg); border-color: #0e7490; }
+    button:hover {
+      color: var(--text);
+      border-color: #527086;
+    }
+
+    button[aria-selected="true"] {
+      color: var(--accent);
+      background: var(--accent-bg);
+      border-color: #0e7490;
+    }
 
     .theme-toggle {
       min-width: 44px;
@@ -127,9 +142,21 @@
       transition: .15s ease;
     }
 
-    .github-link:hover { border-color: #527086; color: var(--accent); }
-    .github-link:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
-    .github-link svg { width: 20px; height: 20px; fill: currentColor; }
+    .github-link:hover {
+      border-color: #527086;
+      color: var(--accent);
+    }
+
+    .github-link:focus-visible {
+      outline: 3px solid var(--accent);
+      outline-offset: 2px;
+    }
+
+    .github-link svg {
+      width: 20px;
+      height: 20px;
+      fill: currentColor;
+    }
 
     .viewport {
       overflow-x: auto;
@@ -186,7 +213,9 @@
       grid-template-columns: repeat(6, var(--unit)) calc(var(--unit) + var(--gap)) minmax(70px, 1fr) calc(var(--unit) + var(--gap)) repeat(6, var(--unit));
     }
 
-    .row.short .split { grid-column: 10; }
+    .row.short .split {
+      grid-column: 10;
+    }
 
     .key {
       position: relative;
@@ -202,16 +231,46 @@
       cursor: pointer;
     }
 
-    .key:hover { transform: translateY(-2px); background: var(--key-hover); border-color: var(--border); }
-    .key:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
-    .key:active { transform: translateY(1px); }
-    .key.transparent { opacity: .46; }
+    .key:hover {
+      transform: translateY(-2px);
+      background: var(--key-hover);
+      border-color: var(--border);
+    }
+
+    .key:focus-visible {
+      outline: 3px solid var(--accent);
+      outline-offset: 2px;
+    }
+
+    .key:active {
+      transform: translateY(1px);
+    }
+
+    .key.transparent {
+      opacity: .46;
+    }
+
+    .key.none-key {
+      border-color: var(--none-key-border);
+      background: var(--none-key-bg);
+      color: var(--none-key-text);
+    }
+
+    .key.none-key .action {
+      color: var(--none-key-text);
+      opacity: .7;
+    }
+
     .key.layer-key {
       border-color: var(--layer-key-border);
       background: var(--layer-key-bg);
       color: var(--layer-key-text);
     }
-    .key.layer-key .action { color: var(--layer-key-text); opacity: .72; }
+
+    .key.layer-key .action {
+      color: var(--layer-key-text);
+      opacity: .72;
+    }
 
     .key-hole {
       height: var(--unit);
@@ -228,10 +287,15 @@
       overflow: hidden;
       color: var(--muted);
       font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-      font-size: 9px;
+      font-size: 8px;
       line-height: 1;
       text-overflow: ellipsis;
       white-space: nowrap;
+    }
+
+    .action.compact {
+      font-size: 7px;
+      letter-spacing: -.03em;
     }
 
     .label {
@@ -239,13 +303,21 @@
       height: 100%;
       place-items: center;
       padding-top: 7px;
-      font-size: clamp(13px, 1.45vw, 21px);
+      font-size: clamp(12px, 1.25vw, 18px);
       white-space: nowrap;
     }
 
-    .label.small { font-size: clamp(9px, .82vw, 12px); }
+    .label.medium {
+      font-size: clamp(10px, 1vw, 14px);
+    }
 
-    .split { grid-column: 9; }
+    .label.small {
+      font-size: clamp(8px, .78vw, 11px);
+    }
+
+    .split {
+      grid-column: 9;
+    }
 
     footer {
       display: flex;
@@ -266,56 +338,10 @@
       background: var(--key);
     }
 
-    .dot.layer { border-color: #0e7490; background: #203b47; }
-
-    .settings {
-      margin-top: 28px;
-      padding: clamp(16px, 2.5vw, 26px);
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      background: var(--panel);
+    .dot.layer {
+      border-color: #0e7490;
+      background: #203b47;
     }
-
-    .settings h2 {
-      margin: 0;
-      font-size: 18px;
-    }
-
-    .settings-status {
-      margin: 5px 0 18px;
-      color: var(--muted);
-      font-size: 12px;
-    }
-
-    .settings-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
-      gap: 10px;
-    }
-
-    .setting {
-      min-width: 0;
-      padding: 12px;
-      border: 1px solid var(--border);
-      border-radius: 9px;
-      background: var(--bg);
-    }
-
-    .setting dt {
-      margin-bottom: 6px;
-      color: var(--muted);
-      font-size: 11px;
-    }
-
-    .setting dd {
-      margin: 0;
-      overflow-wrap: anywhere;
-      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-      font-size: 12px;
-      line-height: 1.5;
-    }
-
-    .setting code { background: var(--code-bg); }
 
     .copy-toast {
       position: fixed;
@@ -336,14 +362,24 @@
       transition: opacity .15s ease, transform .15s ease;
     }
 
-    .copy-toast.visible { opacity: 1; transform: translateY(0); }
+    .copy-toast.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
 
     @media (max-width: 700px) {
-      header { align-items: start; flex-direction: column; }
-      .tabs { justify-content: flex-start; }
+      header {
+        align-items: start;
+        flex-direction: column;
+      }
+
+      .tabs {
+        justify-content: flex-start;
+      }
     }
   </style>
 </head>
+
 <body>
   <main>
     <header>
@@ -353,9 +389,11 @@
       </div>
       <div class="header-actions">
         <nav class="tabs" aria-label="レイヤー選択"></nav>
-        <a class="github-link" href="https://github.com/marcotech-jp/zmk-keyboard-torabo-tsuki-lp" target="_blank" rel="noopener noreferrer" aria-label="GitHubでリポジトリを開く" title="GitHubリポジトリ">
+        <a class="github-link" href="https://github.com/marcotech-jp/zmk-keyboard-torabo-tsuki-lp" target="_blank"
+          rel="noopener noreferrer" aria-label="GitHubでリポジトリを開く" title="GitHubリポジトリ">
           <svg viewBox="0 0 24 24" aria-hidden="true">
-            <path d="M12 .7a11.5 11.5 0 0 0-3.64 22.41c.58.1.79-.25.79-.56v-2.23c-3.22.7-3.9-1.37-3.9-1.37-.53-1.34-1.29-1.69-1.29-1.69-1.05-.72.08-.7.08-.7 1.16.08 1.78 1.2 1.78 1.2 1.03 1.77 2.71 1.26 3.37.96.1-.75.4-1.26.74-1.55-2.57-.29-5.28-1.29-5.28-5.68 0-1.26.45-2.28 1.19-3.09-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.16 1.18A10.95 10.95 0 0 1 12 6.15c.98 0 1.95.13 2.88.38 2.2-1.49 3.16-1.18 3.16-1.18.63 1.59.23 2.76.11 3.05.74.81 1.19 1.83 1.19 3.09 0 4.4-2.71 5.38-5.29 5.67.42.36.79 1.06.79 2.14v3.25c0 .31.21.67.8.56A11.5 11.5 0 0 0 12 .7Z"/>
+            <path
+              d="M12 .7a11.5 11.5 0 0 0-3.64 22.41c.58.1.79-.25.79-.56v-2.23c-3.22.7-3.9-1.37-3.9-1.37-.53-1.34-1.29-1.69-1.29-1.69-1.05-.72.08-.7.08-.7 1.16.08 1.78 1.2 1.78 1.2 1.03 1.77 2.71 1.26 3.37.96.1-.75.4-1.26.74-1.55-2.57-.29-5.28-1.29-5.28-5.68 0-1.26.45-2.28 1.19-3.09-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.16 1.18A10.95 10.95 0 0 1 12 6.15c.98 0 1.95.13 2.88.38 2.2-1.49 3.16-1.18 3.16-1.18.63 1.59.23 2.76.11 3.05.74.81 1.19 1.83 1.19 3.09 0 4.4-2.71 5.38-5.29 5.67.42.36.79 1.06.79 2.14v3.25c0 .31.21.67.8.56A11.5 11.5 0 0 0 12 .7Z" />
           </svg>
         </a>
         <button class="theme-toggle" type="button" aria-label="ライトモードに切り替え" title="テーマ切替">☀︎</button>
@@ -373,29 +411,17 @@
       <span>キーをクリック = layer・row・colをコピー</span>
     </footer>
 
-    <section class="settings" aria-labelledby="settings-title">
-      <h2 id="settings-title">ポインティング設定</h2>
-      <p id="settings-status" class="settings-status">マウス関連の設定ファイルを読み込んでいます…</p>
-      <dl class="settings-grid"></dl>
-    </section>
   </main>
   <div class="copy-toast" role="status" aria-live="polite"></div>
 
   <script>
     const KEYMAP_URL = "config/keymap.keymap";
-    const POINTING_CONFIG_URLS = {
-      build: "build.yaml",
-      shield: "boards/shields/torabo_tsuki_lp/torabo_tsuki_lp_right.overlay",
-      device: "snippets/input-trackball/input-trackball.overlay",
-      driver: "snippets/input-trackball/input-trackball.conf"
-    };
     const ROW_LENGTHS = [12, 12, 14, 12];
     const KEY_LABELS = {
-      ESCAPE: "ESC", LCTRL: "CTRL", LSHFT: "⇧", RSHFT: "⇧", RIGHT_SHIFT: "⇧",
-      LGUI: "◆", LALT: "LALT", LANGUAGE_2: "英数", LANGUAGE_1: "日本語",
-      COMMA: ",", DOT: ".", FSLH: "/", SPACE: "␠", BSPC: "⌫", ENTER: "↵",
+      LGUI: "⌘", LALT: "LALT", LANGUAGE_2: "EN", LANGUAGE_1: "JP",
+      COMMA: ",", DOT: ".", FSLH: "/", BSPC: "⌫",
       LEFT: "←", RIGHT: "→", DOWN: "↓", UP: "↑", UP_ARROW: "↑",
-      PG_UP: "PG↑", PAGE_DOWN: "PG↓", DELETE: "DEL", SINGLE_QUOTE: "'", SQT: ":",
+      SINGLE_QUOTE: "'", SQT: ":",
       DQT: "\"", GRAVE: "`", TILDE: "~", PIPE: "|", SEMI: ";", COLON: ":",
       MINUS: "-", EQUAL: "=", LEFT_BRACE: "[", RIGHT_BRACE: "]",
       LEFT_BRACKET: "{", RIGHT_BRACKET: "}", BACKSLASH: "\\"
@@ -413,8 +439,6 @@
     const tabs = document.querySelector(".tabs");
     const title = document.querySelector("#title");
     const status = document.querySelector("#status");
-    const settingsStatus = document.querySelector("#settings-status");
-    const settingsGrid = document.querySelector(".settings-grid");
     const themeToggle = document.querySelector(".theme-toggle");
     const copyToast = document.querySelector(".copy-toast");
     let layers = [];
@@ -449,15 +473,15 @@
       let label = action;
       let extra = "";
 
-      if (behavior === "&trans") return { label: "▽", action, extra: "transparent" };
-      if (behavior === "&none") return { label: "—", action, extra: "small" };
+      if (behavior === "&trans") return { label: "▽", action, extra: "transparent", size: "" };
+      if (behavior === "&none") return { label: action, action, extra: "none-key", size: "medium" };
       if (behavior === "&kp") label = keycodeLabel(params[0]);
       if (behavior === "&lt") {
         label = `${params[0]} ${keycodeLabel(params[1])}`;
         extra = "layer-key";
       }
       if (behavior === "&mo") {
-        label = `SCROLL ${params[0]}`;
+        label = `LAYER ${params[0]}`;
         extra = "layer-key";
       }
       if (behavior === "&mt") {
@@ -467,9 +491,9 @@
       if (behavior === "&mkp") label = MOUSE_LABELS[params[0]] ?? params[0];
       if (behavior === "&out") label = params[0]?.replace("OUT_", "") ?? action;
       if (behavior === "&bt") label = params[0] === "BT_NXT" ? "BT NEXT" : params.join(" ");
-      if (label.length > 7) extra = `${extra} small`.trim();
+      const size = label.length >= 7 ? "small" : label.length >= 5 ? "medium" : "";
 
-      return { label, action, extra };
+      return { label, action, extra, size };
     }
 
     function parseBindings(source) {
@@ -510,70 +534,10 @@
       return parsedLayers;
     }
 
-    function capture(source, pattern, fallback = "—") {
-      return source.match(pattern)?.[1]?.trim().replace(/\s+/g, " ") ?? fallback;
-    }
-
-    function transformLabel(value) {
-      const flags = [...value.matchAll(/INPUT_TRANSFORM_([A-Z_]+)/g)].map((match) => match[1]);
-      return flags.length ? flags.join(" + ") : "なし";
-    }
-
-    function parsePointingSettings(files) {
-      const listener = capture(files.shield, /&pointing_listener\s*\{([\s\S]*?)\n\s*scroll_mode\s*\{/);
-      const scroll = capture(files.shield, /scroll_mode\s*\{([\s\S]*?)\n\s*\};/);
-      const tempLayer = files.shield.match(/&zip_temp_layer\s+(\d+)\s+(\d+)/);
-      const snippets = capture(files.build, /shield:\s*torabo_tsuki_lp_right[\s\S]*?snippet:\s*["']?([^"'\n]+)/);
-      const compatible = capture(files.device, /pointing_device[^\{]*\{[\s\S]*?compatible\s*=\s*"([^"]+)"/);
-      const frequency = capture(files.device, /spi-max-frequency\s*=\s*<(\d+)>/);
-      const idle = capture(files.shield, /require-prior-idle-ms\s*=\s*<(\d+)>/);
-      const exclusions = capture(files.shield, /excluded-positions\s*=\s*<([^>]+)>/);
-      const scrollLayers = capture(scroll, /layers\s*=\s*<([^>]+)>/);
-
-      return [
-        ["ビルド", `right / central`],
-        ["入力デバイス", compatible],
-        ["ドライバー", capture(files.driver, /CONFIG_([A-Z0-9_]+)=y/)],
-        ["SPI 周波数", frequency === "—" ? frequency : `${Number(frequency).toLocaleString()} Hz`],
-        ["通常時の軸変換", transformLabel(listener)],
-        ["一時マウスレイヤー", tempLayer ? `layer ${tempLayer[1]} / ${tempLayer[2]} ms` : "なし"],
-        ["スクロールレイヤー", scrollLayers],
-        ["スクロール時の軸変換", transformLabel(scroll)],
-        ["XY → スクロール", scroll.includes("zip_xy_to_scroll_mapper") ? "有効" : "無効"],
-        ["一時レイヤー待機時間", idle === "—" ? idle : `${idle} ms`],
-        ["一時レイヤー除外位置", exclusions],
-        ["使用 snippet", snippets]
-      ];
-    }
-
-    function renderPointingSettings(settings) {
-      settingsGrid.replaceChildren(...settings.map(([name, value]) => {
-        const item = document.createElement("div");
-        item.className = "setting";
-        const term = document.createElement("dt");
-        term.textContent = name;
-        const detail = document.createElement("dd");
-        detail.textContent = value;
-        item.append(term, detail);
-        return item;
-      }));
-    }
-
     async function loadText(url) {
       const response = await fetch(url, { cache: "no-cache" });
       if (!response.ok) throw new Error(`${url}: HTTP ${response.status}`);
       return response.text();
-    }
-
-    async function initializePointingSettings() {
-      try {
-        const entries = await Promise.all(Object.entries(POINTING_CONFIG_URLS).map(async ([name, url]) => [name, await loadText(url)]));
-        renderPointingSettings(parsePointingSettings(Object.fromEntries(entries)));
-        settingsStatus.textContent = Object.values(POINTING_CONFIG_URLS).join(" · ");
-      } catch (error) {
-        settingsStatus.textContent = `読み込みエラー: ${error.message}`;
-        console.error(error);
-      }
     }
 
     async function copyCoordinate(layerName, rowIndex, colIndex) {
@@ -659,10 +623,10 @@
             }
           });
           const action = document.createElement("span");
-          action.className = "action";
+          action.className = `action${key.action.length >= 14 ? " compact" : ""}`;
           action.textContent = key.action;
           const label = document.createElement("span");
-          label.className = `label${key.extra.includes("small") ? " small" : ""}`;
+          label.className = `label${key.size ? ` ${key.size}` : ""}`;
           label.textContent = key.label;
           keyEl.append(action, label);
           row.append(keyEl);
@@ -697,7 +661,7 @@
 
     initializeTheme();
     initialize();
-    initializePointingSettings();
   </script>
 </body>
+
 </html>

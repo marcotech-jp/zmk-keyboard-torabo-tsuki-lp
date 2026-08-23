@@ -5,6 +5,14 @@
 * キーマップはkeymap-editorおよびzmk-studioで編集できます
 * [キーマッププレビュー](https://marcotech-jp.github.io/zmk-keyboard-torabo-tsuki-lp/)
 
+## レイヤー構成
+
+- `layer_0`: 通常使用するQWERTYの基本入力レイヤー
+- `layer_1`: クリックや戻る・進むを操作する一時マウスレイヤー
+- `layer_2`: F1-F12とDeleteを配置したトラックボールのスクロールレイヤー
+- `layer_3`: ファンクションキー、ナビゲーション、出力切替をまとめたレイヤー
+- `layer_4`: 数字と記号を入力するレイヤー
+
 ## キーマッププレビューをローカルで表示
 
 リポジトリのルートディレクトリで、PythonのHTTPサーバーを起動します。
@@ -14,17 +22,3 @@ python3 -m http.server 8000 --bind 127.0.0.1
 ```
 
 ブラウザで <http://127.0.0.1:8000/> を開いてください。設定を変更した後は、ページを再読み込みすると反映されます。サーバーを終了するには、起動したターミナルで `Ctrl+C` を押します。
-
-## キーマップの検証
-
-```sh
-python3 scripts/validate_keymap.py
-```
-
-各レイヤーのbinding数を検証します。この検証はGitHub Actionsでもファームウェアのビルド前に実行されます。
-
-物理座標に設定されたbindingも確認できます。
-
-```sh
-python3 scripts/validate_keymap.py layer_1 r1 c11
-```
