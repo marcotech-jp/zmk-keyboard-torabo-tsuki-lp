@@ -164,57 +164,44 @@
     }
 
     .keyboard {
+      position: relative;
+      align-content: start;
+      --pitch: calc(var(--unit) + var(--gap));
+      min-height: calc(var(--pitch) * 5.3 + 30px);
       min-width: calc(var(--unit) * 14 + var(--gap) * 13 + clamp(70px, 7vw, 110px) + 36px);
       display: grid;
       gap: var(--gap);
     }
 
-    .axis-row,
-    .row-shell {
-      display: grid;
-      grid-template-columns: 30px 1fr;
-      gap: 6px;
+    .keyboard-half {
+      position: absolute;
+      top: 30px;
+      width: calc(var(--pitch) * 7);
+      height: calc(var(--pitch) * 5.3);
     }
 
-    .axis-corner,
-    .row-label,
-    .col-label {
-      display: grid;
-      place-items: center;
-      color: var(--accent);
-      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-      font-size: 10px;
-      font-weight: 700;
-      opacity: .72;
+    .left-half {
+      left: 36px;
     }
 
-    .axis-corner {
-      width: 30px;
-      height: 22px;
-      border-right: 1px solid rgba(103, 232, 249, .2);
-      border-bottom: 1px solid rgba(103, 232, 249, .2);
+    .right-half {
+      left: calc(100% - var(--pitch) * 7);
     }
 
-    .row-label {
-      border-right: 1px solid rgba(103, 232, 249, .2);
+    .keyboard-half .key {
+      position: absolute;
+      left: calc(var(--x) * var(--pitch));
+      top: calc(var(--y) * var(--pitch));
+      width: var(--unit);
+      rotate: var(--angle, 0deg);
     }
 
-    .column-headers {
-      height: 22px;
-    }
-
-    .row {
-      display: grid;
-      grid-template-columns: repeat(7, var(--unit)) minmax(70px, 1fr) repeat(7, var(--unit));
-      gap: var(--gap);
-    }
-
-    .row.short {
-      grid-template-columns: repeat(6, var(--unit)) calc(var(--unit) + var(--gap)) minmax(70px, 1fr) calc(var(--unit) + var(--gap)) repeat(6, var(--unit));
-    }
-
-    .row.short .split {
-      grid-column: 10;
+    .keyboard-half .coordinate {
+      position: absolute;
+      bottom: 3px;
+      right: 5px;
+      color: var(--muted);
+      font: 8px ui-monospace, monospace;
     }
 
     .key {
@@ -272,13 +259,6 @@
       opacity: .72;
     }
 
-    .key-hole {
-      height: var(--unit);
-      border: 1px dashed rgba(148, 163, 184, .14);
-      border-radius: 7px;
-      background: rgba(15, 23, 42, .2);
-    }
-
     .action {
       position: absolute;
       top: 5px;
@@ -313,10 +293,6 @@
 
     .label.small {
       font-size: clamp(8px, .78vw, 11px);
-    }
-
-    .split {
-      grid-column: 9;
     }
 
     footer {
@@ -417,6 +393,25 @@
   <script>
     const KEYMAP_URL = "config/keymap.keymap";
     const ROW_LENGTHS = [12, 12, 14, 12];
+    // Physical positions, in key pitches. Coordinates retain the
+    // keymap's row/column identity even when keys are staggered or rotated.
+    function leftPosition(row, col) {
+      // M Layout column offsets and the three-key thumb fan.
+      if (row === 3 && col === 4) return { x: 4.15, y: 3.5, angle: 0 };
+      if (row === 3 && col === 5) return { x: 5.27, y: 3.65, angle: 10 };
+      if (row === 3 && col === 6) return { x: 6.39, y: 3.95, angle: 20 };
+      const stagger = [.6, .6, .25, 0, .13, .25, .4];
+      return { x: col, y: row + stagger[col], angle: 0 };
+    }
+
+    function rightPosition(row, col) {
+      if (row === 3 && col === 7) return { x: 0, y: 3.95, angle: -20 };
+      if (row === 3 && col === 8) return { x: 1.12, y: 3.65, angle: -10 };
+      if (col === 7) return { x: 0, y: 2.4, angle: 0 };
+      const stagger = { 8: .25, 9: .13, 10: 0, 11: .25, 12: .6, 13: .6 };
+      return { x: col - 7, y: row + stagger[col], angle: 0 };
+    }
+
     const KEY_LABELS = {
       LGUI: "⌘", LALT: "LALT", LANGUAGE_2: "EN", LANGUAGE_1: "JP",
       COMMA: ",", DOT: ".", FSLH: "/", BSPC: "⌫",
@@ -570,46 +565,24 @@
       title.textContent = layers[layerIndex].name;
       keyboard.replaceChildren();
 
-      const axisRow = document.createElement("div");
-      axisRow.className = "axis-row";
-      const corner = document.createElement("div");
-      corner.className = "axis-corner";
-      const columnHeaders = document.createElement("div");
-      columnHeaders.className = "row column-headers";
-      Array.from({ length: 14 }, (_, colIndex) => {
-        const label = document.createElement("div");
-        label.className = "col-label";
-        if (colIndex === 7) label.classList.add("split");
-        label.textContent = `c${colIndex}`;
-        columnHeaders.append(label);
+      const halves = ["left", "right"].map((side, index) => {
+        const half = document.createElement("div");
+        half.className = `keyboard-half ${side}-half`;
+        half.setAttribute("role", "group");
+        half.setAttribute("aria-label", `${index === 0 ? "左" : "右"}側・実機配置`);
+        keyboard.append(half);
+        return half;
       });
-      axisRow.append(corner, columnHeaders);
-      keyboard.append(axisRow);
 
       layers[layerIndex].rows.forEach((keys, rowIndex) => {
-        const rowShell = document.createElement("div");
-        rowShell.className = "row-shell";
-        const rowLabel = document.createElement("div");
-        rowLabel.className = "row-label";
-        rowLabel.textContent = `r${rowIndex}`;
-        const row = document.createElement("div");
         const short = keys.length === 12;
-        row.className = `row${short ? " short" : ""}`;
 
         keys.forEach((key, index) => {
           const colIndex = short && index >= 6 ? index + 2 : index;
           const coord = `r${rowIndex} c${colIndex}`;
-          if (key === null) {
-            const hole = document.createElement("div");
-            hole.className = "key-hole";
-            hole.setAttribute("aria-label", `${coord} キー未実装`);
-            row.append(hole);
-            return;
-          }
+          if (key === null) return;
           const keyEl = document.createElement("div");
-          const splitAt = keys.length / 2;
           keyEl.className = `key ${key.extra}`.trim();
-          if (index === splitAt) keyEl.classList.add("split");
           keyEl.title = coord + " · " + key.action;
           keyEl.tabIndex = 0;
           keyEl.setAttribute("role", "button");
@@ -629,10 +602,17 @@
           label.className = `label${key.size ? ` ${key.size}` : ""}`;
           label.textContent = key.label;
           keyEl.append(action, label);
-          row.append(keyEl);
+          const right = colIndex >= 7;
+          const position = right ? rightPosition(rowIndex, colIndex) : leftPosition(rowIndex, colIndex);
+          keyEl.style.setProperty("--x", position.x);
+          keyEl.style.setProperty("--y", position.y);
+          keyEl.style.setProperty("--angle", `${position.angle}deg`);
+          const coordinate = document.createElement("span");
+          coordinate.className = "coordinate";
+          coordinate.textContent = coord;
+          keyEl.append(coordinate);
+          halves[right ? 1 : 0].append(keyEl);
         });
-        rowShell.append(rowLabel, row);
-        keyboard.append(rowShell);
       });
 
       [...tabs.children].forEach((tab, index) => tab.setAttribute("aria-selected", String(index === layerIndex)));
