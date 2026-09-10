@@ -6,11 +6,11 @@
     input-processors = <
         &zip_xy_transform (INPUT_TRANSFORM_X_INVERT | INPUT_TRANSFORM_Y_INVERT)
         &zip_xy_scaler 9 10
-        &zip_temp_layer 1 3000
+        &zip_temp_layer 2 10000
     >;
 
     scroll_mode {
-        layers = <2>;
+        layers = <3>;
         input-processors = <
             &zip_xy_transform INPUT_TRANSFORM_X_INVERT
             &zip_xy_to_scroll_mapper

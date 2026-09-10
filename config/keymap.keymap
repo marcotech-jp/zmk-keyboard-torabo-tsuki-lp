@@ -13,6 +13,28 @@
             tapping-term-ms = <200>;
             bindings = <&mo>, <&mkp>;
         };
+
+        mc_ht: mission_control_hold_tap {
+            compatible = "zmk,behavior-hold-tap";
+            #binding-cells = <2>;
+            flavor = "tap-preferred";
+            tapping-term-ms = <200>;
+            bindings = <&kp>, <&kp>;
+        };
+    };
+
+    macros {
+        select_windows: select_windows {
+            compatible = "zmk,behavior-macro";
+            #binding-cells = <0>;
+            bindings = <&bt BT_SEL 0>, <&to 0>;
+        };
+
+        select_macos: select_macos {
+            compatible = "zmk,behavior-macro";
+            #binding-cells = <0>;
+            bindings = <&bt BT_SEL 1>, <&to 1>;
+        };
     };
 
     combos {
@@ -21,7 +43,7 @@
         bt_clear {
             bindings = <&bt BT_CLR>;
             key-positions = <16 17>;
-            layers = <4>;
+            layers = <6>;
         };
     };
 
@@ -36,42 +58,67 @@
          * r3: c0-c8, c11-c13
          */
         layer_0 {
+            display-name = "Windows";
             bindings = <
 &kp TAB     &kp Q  &kp W     &kp E     &kp R        &kp T                                               &kp Y     &kp U     &kp I      &kp O     &kp P     &kp MINUS
-&kp LCTRL   &kp A  &kp S     &kp D     &kp F        &kp G                                               &kp H     &kp J     &kp K      &kp L     &kp SEMI  &kp ENTER
-&kp LSHFT   &kp Z  &kp X     &kp C     &kp V        &kp B       &kp LC(LEFT)        &kp LC(RIGHT)       &kp N     &kp M     &kp COMMA  &kp DOT   &kp UP    &kp FSLH
-&none       &none  &kp LGUI  &kp LALT  &kp ESCAPE   &kp SPACE   &lt 2 LANGUAGE_2    &lt 3 LANGUAGE_1    &kp BSPC                       &kp LEFT  &kp DOWN  &kp RIGHT
+&kp LCTRL  &kp A  &kp S  &kp D  &kp F  &kp G                                               &kp H     &kp J     &kp K      &kp L     &kp SEMI  &kp ENTER
+&kp LSHFT   &kp Z  &kp X     &kp C     &kp V        &kp B       &none    &none    &kp N     &kp M     &kp COMMA  &kp DOT   &kp UP    &kp FSLH
+&kp LCTRL  &none  &kp LGUI  &kp LALT  &kp ESCAPE  &kp SPACE   &lt 4 LANGUAGE_2  &lt 5 LANGUAGE_1  &kp BSPC                    &kp LEFT  &kp DOWN  &kp RIGHT
             >;
         };
 
         layer_1 {
+            display-name = "macOS";
             bindings = <
-&trans  &trans  &trans  &trans  &trans  &trans                    &trans    &mkp MB4   &mkp MB5   &trans           &trans  &trans
-&trans  &trans  &trans  &trans  &trans  &trans                    &trans    &mkp LCLK  &mkp RCLK  &mclk_lt 2 MCLK  &trans  &trans
-&trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans    &trans    &trans     &trans     &trans           &trans  &trans
-&trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans    &trans                          &trans           &trans  &trans
+&trans  &trans  &trans  &trans  &trans  &trans                    &trans  &trans  &trans  &trans  &trans  &trans
+&kp LGUI  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans
+&trans  &trans  &trans  &trans  &trans  &trans   &kp LC(LEFT)  &mc_ht LC(UP) LC(RIGHT)  &trans  &trans  &trans  &trans  &trans  &trans
+&trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans
             >;
         };
 
         layer_2 {
+            display-name = "Pointer";
             bindings = <
-&kp F1  &kp F2  &kp F3  &kp F4  &kp F5  &kp F6                  &kp F7        &kp F8  &kp F9  &kp F10  &kp F11  &kp F12
-&trans  &kp N1  &kp N2  &kp N3  &kp N4  &kp N5                  &kp N6        &kp N7  &kp N8  &kp N9   &kp N0   &trans
-&trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans        &trans  &trans  &trans   &trans   &trans
-&trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &kp DELETE                    &trans   &trans   &trans
+&trans  &trans  &trans  &trans  &trans  &trans                    &trans    &mkp MB4   &mkp MB5   &trans                      &trans  &trans
+&trans  &trans  &trans  &trans  &trans  &trans                    &trans    &mkp LCLK  &mkp RCLK  &mclk_lt 3 MCLK  &trans  &trans
+&trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans    &trans    &trans     &trans     &trans                      &trans  &trans
+&trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans    &trans                          &trans                      &trans  &trans
             >;
         };
 
         layer_3 {
+            display-name = "Scroll";
             bindings = <
-&bt BT_SEL 0  &kp F1   &kp F2   &kp F3        &kp F4        &kp F5                      &kp HOME          &kp PG_UP  &kp PAGE_DOWN  &kp END    &kp ESCAPE  &trans
-&bt BT_SEL 1  &kp F6   &kp F7   &kp F8        &kp F9        &kp F10                     &kp LEFT          &kp DOWN   &kp UP_ARROW   &kp RIGHT  &kp TAB     &trans
-&bt BT_SEL 2  &kp F11  &kp F12  &out OUT_USB  &out OUT_BLE  &bt BT_NXT  &trans  &trans  &kp SINGLE_QUOTE  &kp DQT    &kp GRAVE      &kp TILDE  &kp PIPE    &trans
-&bt BT_SEL 3  &trans   &trans   &trans        &trans        &trans      &trans  &trans  &trans                                      &trans     &trans      &trans
+&trans  &trans  &trans  &trans  &trans  &trans                    &trans  &trans  &trans  &trans  &trans  &trans
+&trans  &trans  &trans  &trans  &trans  &trans                    &trans  &trans  &trans  &trans  &trans  &trans
+&trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans    &trans  &trans  &trans  &trans  &trans  &trans
+&trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans    &trans                  &trans  &trans  &trans
             >;
         };
 
         layer_4 {
+            display-name = "Extra";
+            bindings = <
+&kp F1  &kp F2  &kp F3  &kp F4  &kp F5  &kp F6                  &kp F7        &kp F8  &kp F9  &kp F10  &kp F11  &kp F12
+&trans  &kp N1  &kp N2  &kp N3  &kp N4  &kp N5                  &kp N6        &kp N7  &kp N8  &kp N9   &kp N0   &trans
+&trans  &trans  &trans  &trans  &trans  &trans  &kp LA(TAB)  &trans  &trans        &trans  &trans  &trans   &trans   &trans
+&trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &kp DELETE                    &trans   &trans   &trans
+            >;
+        };
+
+        layer_5 {
+            display-name = "Function";
+            bindings = <
+&select_windows  &kp F1   &kp F2   &kp F3        &kp F4        &kp F5                      &kp HOME          &kp PG_UP  &kp PAGE_DOWN  &kp END    &kp ESCAPE  &trans
+&select_macos    &kp F6   &kp F7   &kp F8        &kp F9        &kp F10                     &kp LEFT          &kp DOWN   &kp UP_ARROW   &kp RIGHT  &kp TAB     &trans
+&bt BT_SEL 2     &kp F11  &kp F12  &out OUT_USB  &out OUT_BLE  &bt BT_NXT  &trans  &trans  &kp SINGLE_QUOTE  &kp DQT    &kp GRAVE      &kp TILDE  &kp PIPE    &trans
+&bt BT_SEL 3     &trans   &trans   &trans        &trans        &trans      &trans  &trans  &trans                                      &trans     &trans      &trans
+            >;
+        };
+
+        layer_6 {
+            display-name = "Numbers";
             bindings = <
 &trans  &kp LS(NUMBER_1)  &kp LS(NUMBER_2)  &kp LS(N3)  &kp LS(N4)  &kp LS(N5)                  &kp LS(N6)      &kp LS(N7)     &kp LS(N8)        &kp LS(N9)         &kp LS(N0)     &trans
 &trans  &kp N1            &kp N2            &kp N3      &kp N4      &kp N5                      &kp LEFT_BRACE  &kp MINUS      &kp EQUAL         &kp RIGHT_BRACE    &kp COLON      &trans

@@ -360,7 +360,7 @@
   <main>
     <header>
       <div>
-        <h1 id="title">layer_0</h1>
+        <h1 id="title">Keymap</h1>
         <p id="status" class="subtitle">config/keymap.keymap を読み込んでいます…</p>
       </div>
       <div class="header-actions">
@@ -516,13 +516,24 @@
       });
     }
 
+    function layerDisplayName(source, layerName) {
+      const match = source.match(/\bdisplay-name\s*=\s*"([^"]+)"\s*;/);
+      return match?.[1] ?? layerName;
+    }
+
+    function layerLabel(layer) {
+      const number = layer.name.match(/^layer_(\d+)$/)?.[1];
+      return number === undefined ? layer.displayName : "Layer " + number + " · " + layer.displayName;
+    }
+
     function parseKeymap(source) {
       const parsedLayers = [];
-      const layerPattern = /\b(layer_[A-Za-z0-9_]+)\s*\{[\s\S]*?bindings\s*=\s*<([\s\S]*?)>;[\s\S]*?\};/g;
+      const layerPattern = /\b(layer_[A-Za-z0-9_]+)\s*\{([\s\S]*?)bindings\s*=\s*<([\s\S]*?)>;[\s\S]*?\};/g;
       for (const match of source.matchAll(layerPattern)) {
         parsedLayers.push({
           name: match[1],
-          rows: rowsFromBindings(parseBindings(match[2]), match[1])
+          displayName: layerDisplayName(match[2], match[1]),
+          rows: rowsFromBindings(parseBindings(match[3]), match[1])
         });
       }
       if (parsedLayers.length === 0) throw new Error("レイヤー設定が見つかりません");
@@ -562,7 +573,8 @@
     }
 
     function render(layerIndex) {
-      title.textContent = layers[layerIndex].name;
+      title.textContent = layerLabel(layers[layerIndex]);
+      title.title = layers[layerIndex].name;
       keyboard.replaceChildren();
 
       const halves = ["left", "right"].map((side, index) => {
@@ -586,7 +598,7 @@
           keyEl.title = coord + " · " + key.action;
           keyEl.tabIndex = 0;
           keyEl.setAttribute("role", "button");
-          keyEl.setAttribute("aria-label", layers[layerIndex].name + " " + coord + " " + key.action + "。クリックで座標をコピー");
+          keyEl.setAttribute("aria-label", layerLabel(layers[layerIndex]) + " " + coord + " " + key.action + "。クリックで座標をコピー");
           const copy = () => copyCoordinate(layers[layerIndex].name, rowIndex, colIndex);
           keyEl.addEventListener("click", copy);
           keyEl.addEventListener("keydown", (event) => {
@@ -626,7 +638,8 @@
         layers.forEach((layer, index) => {
           const button = document.createElement("button");
           button.type = "button";
-          button.textContent = layer.name;
+          button.textContent = layerLabel(layer);
+          button.title = layer.name;
           button.addEventListener("click", () => render(index));
           tabs.append(button);
         });
