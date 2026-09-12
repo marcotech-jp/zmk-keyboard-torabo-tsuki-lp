@@ -40,6 +40,20 @@
     combos {
         compatible = "zmk,combos";
 
+        delete_combo {
+            timeout-ms = <50>;
+            bindings = <&kp DELETE>;
+            key-positions = <10 11>;
+            layers = <0>;
+        };
+
+        mission_control {
+            timeout-ms = <50>;
+            bindings = <&kp LC(UP)>;
+            key-positions = <30 31>;
+            layers = <1>;
+        };
+
         bt_clear {
             bindings = <&bt BT_CLR>;
             key-positions = <16 17>;
@@ -62,8 +76,8 @@
             bindings = <
 &kp TAB     &kp Q  &kp W     &kp E     &kp R        &kp T                                               &kp Y     &kp U     &kp I      &kp O     &kp P     &kp MINUS
 &kp LCTRL  &kp A  &kp S  &kp D  &kp F  &kp G                                               &kp H     &kp J     &kp K      &kp L     &kp SEMI  &kp ENTER
-&kp LSHFT   &kp Z  &kp X     &kp C     &kp V        &kp B       &none    &none    &kp N     &kp M     &kp COMMA  &kp DOT   &kp UP    &kp FSLH
-&kp LCTRL  &none  &kp LGUI  &kp LALT  &kp ESCAPE  &kp SPACE   &lt 4 LANGUAGE_2  &lt 5 LANGUAGE_1  &kp BSPC                    &kp LEFT  &kp DOWN  &kp RIGHT
+&kp LSHFT   &kp Z  &kp X     &kp C     &kp V        &kp B       &mc_ht LC(LEFT) LANGUAGE_2  &mc_ht LC(RIGHT) LANGUAGE_1    &kp N     &kp M     &kp COMMA  &kp DOT   &kp UP    &kp FSLH
+&kp LCTRL  &none  &kp LGUI  &kp LALT  &kp ESCAPE  &kp SPACE   &mo 4  &mo 5  &kp BSPC                    &kp LEFT  &kp DOWN  &kp RIGHT
             >;
         };
 
@@ -72,7 +86,7 @@
             bindings = <
 &trans  &trans  &trans  &trans  &trans  &trans                    &trans  &trans  &trans  &trans  &trans  &trans
 &kp LGUI  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans
-&trans  &trans  &trans  &trans  &trans  &trans   &kp LC(LEFT)  &mc_ht LC(UP) LC(RIGHT)  &trans  &trans  &trans  &trans  &trans  &trans
+&trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans
 &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans
             >;
         };
