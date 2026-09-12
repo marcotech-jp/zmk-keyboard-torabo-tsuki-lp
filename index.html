@@ -23,6 +23,9 @@
       --none-key-bg: #34252c;
       --none-key-border: #6b3848;
       --none-key-text: #d8a4b4;
+      --combo-key-bg: #3a2f16;
+      --combo-key-border: #f59e0b;
+      --combo-key-text: #fde68a;
       --unit: clamp(48px, 5vw, 72px);
       --gap: clamp(5px, .5vw, 8px);
     }
@@ -44,6 +47,9 @@
       --none-key-bg: #f7e8ed;
       --none-key-border: #d7a9b7;
       --none-key-text: #854154;
+      --combo-key-bg: #fff7d6;
+      --combo-key-border: #d97706;
+      --combo-key-text: #92400e;
     }
 
     * {
@@ -74,12 +80,19 @@
       margin-bottom: 28px;
     }
 
+    header > div:first-child {
+      min-width: 0;
+      flex: 1;
+    }
+
     .header-actions {
       display: flex;
       align-items: center;
       justify-content: flex-end;
       gap: 10px;
       flex-wrap: wrap;
+      min-width: 0;
+      width: 65%;
     }
 
     h1 {
@@ -94,12 +107,27 @@
       font-size: 14px;
     }
 
+    .layer-navigation {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      width: 100%;
+      min-width: 0;
+    }
+
     .tabs {
       display: flex;
       gap: 7px;
-      flex-wrap: wrap;
-      justify-content: flex-end;
+      flex: 1;
+      min-width: 0;
+      overflow-x: auto;
+      scrollbar-width: none;
     }
+
+    .tabs::-webkit-scrollbar { display: none; }
+    .tabs button { flex: 0 0 auto; white-space: nowrap; }
+    .tab-scroll { flex: 0 0 40px; padding-inline: 0; }
+    .tab-scroll:disabled { opacity: .3; cursor: default; }
 
     button {
       border: 1px solid var(--border);
@@ -259,6 +287,28 @@
       opacity: .72;
     }
 
+    .key.combo-key {
+      border-color: var(--combo-key-border);
+      background: var(--combo-key-bg);
+      color: var(--combo-key-text);
+    }
+
+    .combo-badge {
+      position: absolute;
+      right: 4px;
+      bottom: 14px;
+      max-width: calc(100% - 8px);
+      overflow: hidden;
+      padding: 2px 4px;
+      border: 1px solid var(--combo-key-border);
+      border-radius: 4px;
+      background: var(--panel);
+      color: var(--combo-key-text);
+      font: 700 7px/1.1 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
     .action {
       position: absolute;
       top: 5px;
@@ -319,6 +369,11 @@
       background: #203b47;
     }
 
+    .dot.combo {
+      border-color: var(--combo-key-border);
+      background: var(--combo-key-bg);
+    }
+
     .copy-toast {
       position: fixed;
       right: 20px;
@@ -349,8 +404,8 @@
         flex-direction: column;
       }
 
-      .tabs {
-        justify-content: flex-start;
+      .header-actions {
+        width: 100%;
       }
     }
   </style>
@@ -364,7 +419,11 @@
         <p id="status" class="subtitle">config/keymap.keymap を読み込んでいます…</p>
       </div>
       <div class="header-actions">
-        <nav class="tabs" aria-label="レイヤー選択"></nav>
+        <div class="layer-navigation">
+          <button class="tab-scroll previous" type="button" aria-label="レイヤー一覧を左へスクロール" aria-controls="layer-tabs" disabled>←</button>
+          <nav id="layer-tabs" class="tabs" aria-label="レイヤー選択"></nav>
+          <button class="tab-scroll next" type="button" aria-label="レイヤー一覧を右へスクロール" aria-controls="layer-tabs" disabled>→</button>
+        </div>
         <a class="github-link" href="https://github.com/marcotech-jp/zmk-keyboard-torabo-tsuki-lp" target="_blank"
           rel="noopener noreferrer" aria-label="GitHubでリポジトリを開く" title="GitHubリポジトリ">
           <svg viewBox="0 0 24 24" aria-hidden="true">
@@ -383,6 +442,7 @@
     <footer>
       <span><i class="dot"></i>通常キー</span>
       <span><i class="dot layer"></i>長押し・レイヤー切替などの特殊キー</span>
+      <span><i class="dot combo"></i>コンボ対象キー（バッジは同時押し時の出力）</span>
       <span>▽ = 下位レイヤーの設定を継承</span>
       <span>キーをクリック = layer・row・colをコピー</span>
     </footer>
@@ -436,7 +496,28 @@
     const status = document.querySelector("#status");
     const themeToggle = document.querySelector(".theme-toggle");
     const copyToast = document.querySelector(".copy-toast");
+    const previousTab = document.querySelector(".tab-scroll.previous");
+    const nextTab = document.querySelector(".tab-scroll.next");
+
+    function updateTabScroll() {
+      previousTab.disabled = tabs.scrollLeft <= 1;
+      nextTab.disabled = tabs.scrollLeft + tabs.clientWidth >= tabs.scrollWidth - 1;
+    }
+
+    function scrollTabs(direction) {
+      tabs.scrollBy({
+        left: direction * Math.max(160, tabs.clientWidth * .7),
+        behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "instant" : "smooth"
+      });
+    }
+
+    previousTab.addEventListener("click", () => scrollTabs(-1));
+    nextTab.addEventListener("click", () => scrollTabs(1));
+    tabs.addEventListener("scroll", updateTabScroll, { passive: true });
+    new ResizeObserver(updateTabScroll).observe(tabs);
+
     let layers = [];
+    let combos = [];
     let copyToastTimer;
 
     function setTheme(theme) {
@@ -486,6 +567,10 @@
       if (behavior === "&mkp") label = MOUSE_LABELS[params[0]] ?? params[0];
       if (behavior === "&out") label = params[0]?.replace("OUT_", "") ?? action;
       if (behavior === "&bt") label = params[0] === "BT_NXT" ? "BT NEXT" : params.join(" ");
+      if (behavior === "&ble_clear_hold") {
+        label = "BT CLEAR";
+        extra = "layer-key";
+      }
       const size = label.length >= 7 ? "small" : label.length >= 5 ? "medium" : "";
 
       return { label, action, extra, size };
@@ -538,6 +623,35 @@
       }
       if (parsedLayers.length === 0) throw new Error("レイヤー設定が見つかりません");
       return parsedLayers;
+    }
+
+    function parseCombos(source) {
+      const combosBlock = source.match(/\bcombos\s*\{([\s\S]*?)\n\s*\};\s*\n\s*keymap\s*\{/);
+      if (!combosBlock) return [];
+
+      const parsedCombos = [];
+      const comboPattern = /\b([A-Za-z0-9_]+)\s*\{([\s\S]*?)\};/g;
+      for (const match of combosBlock[1].matchAll(comboPattern)) {
+        const body = match[2];
+        const binding = body.match(/\bbindings\s*=\s*<([\s\S]*?)>\s*;/g)?.[0].match(/<([\s\S]*?)>/s)?.[1];
+        const positions = body.match(/\bkey-positions\s*=\s*<([\s\S]*?)>\s*;/g)?.[0].match(/<([\s\S]*?)>/s)?.[1];
+        const comboLayers = body.match(/\blayers\s*=\s*<([\s\S]*?)>\s*;/g)?.[0].match(/<([\s\S]*?)>/s)?.[1];
+        if (!binding || !positions) continue;
+        parsedCombos.push({
+          name: match[1],
+          binding: binding.trim().replace(/\s+/g, " "),
+          positions: positions.trim().split(/\s+/).map(Number),
+          layers: comboLayers ? comboLayers.trim().split(/\s+/).map(Number) : null
+        });
+      }
+      return parsedCombos;
+    }
+
+    function bindingPosition(rowIndex, colIndex) {
+      const preceding = ROW_LENGTHS.slice(0, rowIndex).reduce((total, length) => total + length, 0);
+      const gapStart = rowIndex === 3 ? 11 : 8;
+      const indexInRow = ROW_LENGTHS[rowIndex] === 12 && colIndex >= gapStart ? colIndex - 2 : colIndex;
+      return preceding + indexInRow;
     }
 
     async function loadText(url) {
@@ -594,7 +708,11 @@
           const coord = `r${rowIndex} c${colIndex}`;
           if (key === null) return;
           const keyEl = document.createElement("div");
-          keyEl.className = `key ${key.extra}`.trim();
+          const positionIndex = bindingPosition(rowIndex, colIndex);
+          const keyCombos = combos.filter((combo) =>
+            (!combo.layers || combo.layers.includes(layerIndex)) && combo.positions.includes(positionIndex)
+          );
+          keyEl.className = `key ${key.extra}${keyCombos.length ? " combo-key" : ""}`.trim();
           keyEl.title = coord + " · " + key.action;
           keyEl.tabIndex = 0;
           keyEl.setAttribute("role", "button");
@@ -614,6 +732,13 @@
           label.className = `label${key.size ? ` ${key.size}` : ""}`;
           label.textContent = key.label;
           keyEl.append(action, label);
+          keyCombos.forEach((combo) => {
+            const badge = document.createElement("span");
+            badge.className = "combo-badge";
+            badge.textContent = keyFromAction(combo.binding).label;
+            badge.title = `${combo.name}: positions ${combo.positions.join(" + ")} → ${combo.binding}`;
+            keyEl.append(badge);
+          });
           const right = colIndex >= 7;
           const position = right ? rightPosition(rowIndex, colIndex) : leftPosition(rowIndex, colIndex);
           keyEl.style.setProperty("--x", position.x);
@@ -632,8 +757,10 @@
 
     async function initialize() {
       try {
-        layers = parseKeymap(await loadText(KEYMAP_URL));
-        status.textContent = `torabo-tsuki LP · M Layout · ${layers.length} layers · ${KEYMAP_URL}`;
+        const source = await loadText(KEYMAP_URL);
+        layers = parseKeymap(source);
+        combos = parseCombos(source);
+        status.textContent = `torabo-tsuki LP · M Layout · ${layers.length} layers · ${combos.length} combos · ${KEYMAP_URL}`;
 
         layers.forEach((layer, index) => {
           const button = document.createElement("button");
@@ -644,6 +771,7 @@
           tabs.append(button);
         });
         render(0);
+        updateTabScroll();
       } catch (error) {
         title.textContent = "読み込みエラー";
         status.textContent = error.message;
