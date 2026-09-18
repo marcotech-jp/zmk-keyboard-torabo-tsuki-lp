@@ -90,7 +90,7 @@
 &trans  &trans  &trans  &trans  &trans  &trans                    &trans    &mkp MB4   &mkp MB5   &trans                      &trans  &trans
 &trans  &trans  &trans  &trans  &trans  &trans                    &trans    &mkp LCLK  &mkp RCLK  &mclk_lt 2 MCLK  &trans  &trans
 &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans    &trans    &trans     &trans     &trans                      &trans  &trans
-&trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans    &trans                          &trans                      &trans  &trans
+&trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans    &kp LG(W)                          &trans                      &trans  &trans
             >;
         };
 
