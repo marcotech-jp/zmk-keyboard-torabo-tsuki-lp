@@ -16,6 +16,14 @@
             bindings = <&mo>, <&mkp>;
         };
 
+        shortcut_ht: shortcut_hold_tap {
+            compatible = "zmk,behavior-hold-tap";
+            #binding-cells = <2>;
+            flavor = "tap-preferred";
+            tapping-term-ms = <200>;
+            bindings = <&kp>, <&kp>;
+        };
+
         ble_clear_hold: ble_clear_hold_tap {
             compatible = "zmk,behavior-hold-tap";
             #binding-cells = <2>;
@@ -89,8 +97,8 @@
             bindings = <
 &trans  &trans  &trans  &trans  &trans  &trans                    &trans    &mkp MB4   &mkp MB5   &trans                      &trans  &trans
 &trans  &trans  &trans  &trans  &trans  &trans                    &trans    &mkp LCLK  &mkp RCLK  &mclk_lt 2 MCLK  &trans  &trans
-&trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans    &trans    &trans     &trans     &trans                      &trans  &trans
-&trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans    &kp LG(W)                          &trans                      &trans  &trans
+&trans  &trans  &trans  &trans  &trans  &trans  &trans  &shortcut_ht LC(LS(T)) LC(W)    &trans    &trans     &trans     &trans                      &trans  &trans
+&trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans    &trans                          &trans                      &trans  &trans
             >;
         };
 
