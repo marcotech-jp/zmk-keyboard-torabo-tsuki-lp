@@ -97,7 +97,7 @@
             bindings = <
 &trans  &trans  &trans  &trans  &trans  &trans                    &trans    &mkp MB4   &mkp MB5   &trans                      &trans  &trans
 &trans  &trans  &trans  &trans  &trans  &trans                    &trans    &mkp LCLK  &mkp RCLK  &mclk_lt 2 MCLK  &trans  &trans
-&trans  &trans  &trans  &trans  &trans  &trans  &trans  &shortcut_ht LC(LS(T)) LC(W)    &trans    &trans     &trans     &trans                      &trans  &trans
+&trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans    &trans    &shortcut_ht LC(LS(T)) LC(W)     &trans     &trans                      &trans  &trans
 &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans    &trans                          &trans                      &trans  &trans
             >;
         };
