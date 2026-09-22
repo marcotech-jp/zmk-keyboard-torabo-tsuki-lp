@@ -29,3 +29,7 @@ python3 -m http.server 8000 --bind 127.0.0.1
 ```
 
 設定変更後はページを再読み込みしてください。終了は `Ctrl+C`。
+
+## 3Dモデル
+
+`3dmodel/` 内の3DモデルはMITライセンスで配布しています。出典・著作権表記は[3DモデルのREADME](3dmodel/README.md)を参照してください。
