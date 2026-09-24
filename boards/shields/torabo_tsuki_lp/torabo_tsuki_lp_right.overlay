@@ -22,7 +22,7 @@
 
 &zip_temp_layer {
     require-prior-idle-ms = <500>;
-    excluded-positions = <7 8 9 19 20 21>;
+    excluded-positions = <7 8 9 19 20 21 33>;
 };
 
 &size_s_transform {
