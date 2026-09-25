@@ -126,7 +126,7 @@
             display-name = "Function";
             bindings = <
 &trans  &kp LS(N1)  &kp LS(FSLH)  &trans  &trans  &trans                    &trans  &trans  &trans  &trans  &trans  &trans
-&trans  &kp LS(N2)  &kp LS(N4)  &trans  &trans  &trans                    &trans  &trans  &trans  &trans  &trans  &trans
+&trans  &kp LBKT  &kp LS(N4)  &trans  &trans  &trans                    &trans  &trans  &trans  &trans  &trans  &trans
 &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans    &trans  &trans  &trans  &trans  &trans  &trans
 &trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans    &trans                  &trans  &trans  &trans
             >;
